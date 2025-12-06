@@ -8,7 +8,7 @@ import heroImg3 from "../../assets/hero3.png";
 const HeroSection = () => {
   return (
     <section className="mt-10! [&_br]:hidden md:[&_br]:inline [&_h1]:text-4xl/relaxed [&_h1]:text-center md:[&_h1]:text-5xl/relaxed">
-      <Carousel infiniteLoop={true} autoPlay={true} interval={2500} stopOnHover={true}>
+      <Carousel infiniteLoop={true} autoPlay={true} interval={2500} stopOnHover={true} showThumbs={false}>
         
         {/* Slide 1 */}
         <div className="bg-linear-to-br from-teal-50 to-orange-50 rounded-3xl">
