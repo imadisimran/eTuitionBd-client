@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router";
+import GoogleBtn from "./GoogleBtn";
 
 const tabs = [
   {
@@ -17,6 +18,12 @@ const tabs = [
             <input type="email" className="input" placeholder="Email" />
             <label className="label">Password</label>
             <input type="password" className="input" placeholder="Password" />
+            <label className="label">Confirm Password</label>
+            <input
+              type="password"
+              className="input"
+              placeholder="Enter Password Again"
+            />
             <input
               type="submit"
               value="Register"
@@ -100,15 +107,23 @@ const Register = () => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              <h3 className="text-xl font-bold my-5 text-center">{activeTab}</h3>
+              <h3 className="text-xl font-bold my-5 text-center">
+                {activeTab}
+              </h3>
               <div className="text-neutral">
                 {tabs.find((t) => t.label === activeTab)?.content}
               </div>
             </motion.div>
           </AnimatePresence>
         </div>
-          <div className="divider">OR</div>
-        <p className="text-center">Already have an account? <Link to='/login' className="text-secondary">Login</Link></p>
+        <GoogleBtn></GoogleBtn>
+        <div className="divider">OR</div>
+        <p className="text-center">
+          Already have an account?{" "}
+          <Link to="/login" className="text-secondary">
+            Login
+          </Link>
+        </p>
       </div>
     </div>
   );
