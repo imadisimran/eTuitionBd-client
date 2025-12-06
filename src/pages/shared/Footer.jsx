@@ -13,7 +13,7 @@ const year = date.getFullYear();
 
 const Footer = () => {
   return (
-    <footer className="w-full mx-auto bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-3xl p-8 md:p-12 text-base-content overflow-hidden bg-linear-to-br from-teal-50 to-orange-50 min-h-[400px]">
+    <footer className="w-full mx-auto bg-linear-to-br from-teal-50 to-orange-50 border border-gray-100 shadow-lg rounded-3xl p-8 md:p-12 text-base-content overflow-hidden min-h-[400px]">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Column 1: About Us */}
         <div className="flex flex-col gap-4">
@@ -95,24 +95,23 @@ const Footer = () => {
       </div>
 
       {/* Divider & Bottom Section */}
-      <div className="border-t border-gray-400/20 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="border-t border-gray-300 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="font-bold text-gray-700 text-lg">
           <img src={logo} className="w-[150px]" alt="eTuitionBD logo" />
         </div>
         <div className="text-sm text-gray-500 font-medium text-center md:text-right">
-          {year} eTuitionBd. All rights reserved.
+          © {year} eTuitionBd. All rights reserved.
         </div>
       </div>
     </footer>
   );
 };
 
-// Helper Component for Social Icons to reduce repetition
 const SocialIcon = ({ icon }) => {
   return (
     <a
       href="#"
-      className="bg-teal-50/50 hover:bg-teal-100 text-teal-800 p-3 rounded-full transition-all duration-300 shadow-sm border border-white/40 backdrop-blur-sm"
+      className="bg-white hover:bg-teal-100 text-teal-800 p-3 rounded-full transition-all duration-300 shadow-sm border border-gray-100"
     >
       {icon}
     </a>
