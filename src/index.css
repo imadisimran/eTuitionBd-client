@@ -42,3 +42,10 @@
     transform: translate(4px, 4px);
   }
 }
+
+
+/* Margin after every section  */
+
+section,footer{
+  margin-top: 100px;
+}
