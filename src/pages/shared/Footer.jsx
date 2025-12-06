@@ -13,7 +13,7 @@ const year = date.getFullYear();
 
 const Footer = () => {
   return (
-    <footer className="w-full mx-auto bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-3xl p-8 md:p-12 text-base-content overflow-hidden relative bg-linear-to-br from-teal-50 to-orange-50 min-h-[400px]">
+    <footer className="w-full mx-auto bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-3xl p-8 md:p-12 text-base-content overflow-hidden bg-linear-to-br from-teal-50 to-orange-50 min-h-[400px]">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Column 1: About Us */}
         <div className="flex flex-col gap-4">
