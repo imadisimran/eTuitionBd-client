@@ -1,5 +1,5 @@
 import React from "react";
-import logo from '../../assets/logo.png'
+import logo from "../../assets/logo.png";
 import {
   FaFacebookF,
   FaLinkedinIn,
@@ -8,17 +8,12 @@ import {
   FaPhoneAlt,
 } from "react-icons/fa";
 
-const date=new Date()
-const year = date.getFullYear()
+const date = new Date();
+const year = date.getFullYear();
 
 const Footer = () => {
   return (
-    // Outer container with a gradient background to show off the glass effect
-    // You can remove 'bg-gradient-to-r...' if placing this on your own background
     <footer className="w-full mx-auto bg-white/30 backdrop-blur-md border border-white/20 shadow-xl rounded-3xl p-8 md:p-12 text-base-content overflow-hidden relative bg-linear-to-br from-teal-50 to-orange-50 min-h-[400px]">
-      {/* Decorative blur blob (Optional: adds to the aesthetic) */}
-      <div className="absolute top-0 right-0 -mt-10 -mr-10 w-64 h-64 bg-orange-100 rounded-full blur-3xl opacity-50 -z-10"></div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
         {/* Column 1: About Us */}
         <div className="flex flex-col gap-4">
@@ -102,7 +97,7 @@ const Footer = () => {
       {/* Divider & Bottom Section */}
       <div className="border-t border-gray-400/20 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
         <div className="font-bold text-gray-700 text-lg">
-            <img src={logo} className="w-[150px]" alt="eTuitionBD logo" />
+          <img src={logo} className="w-[150px]" alt="eTuitionBD logo" />
         </div>
         <div className="text-sm text-gray-500 font-medium text-center md:text-right">
           {year} eTuitionBd. All rights reserved.
