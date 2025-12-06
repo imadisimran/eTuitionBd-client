@@ -50,8 +50,9 @@ const Navbar = () => {
           {links}
         </ul>
       </div>
-      <div className="navbar-end">
-        <a className="btn">Button</a>
+      <div className="navbar-end gap-5">
+        <Link className="btn btn-primary">Login</Link>
+        <Link className="btn btn-secondary">Post Tuition</Link>
       </div>
     </div>
   );
