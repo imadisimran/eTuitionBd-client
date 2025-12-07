@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 
-export const successAlert = (title = "Your work has been saved") => {
+export const successAlert = (title = "Login Successful") => {
   Swal.fire({
     position: "top-end",
     icon: "success",

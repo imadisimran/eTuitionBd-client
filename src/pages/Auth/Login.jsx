@@ -2,11 +2,25 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import GoogleBtn from "./GoogleBtn";
+import useAuth from "../../hooks/useAuth";
+import { errorAlert, successAlert } from "../../utilities/alerts";
+import SubmitBtn from "./SubmitBtn";
 
 const Login = () => {
+  const { signIn,setLoading } = useAuth();
   const { register, handleSubmit } = useForm();
   const handleLogin = (data) => {
-    console.log(data);
+    signIn(data.email, data.password)
+      .then((result) => {
+        if (result.user.accessToken) {
+          successAlert();
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        setLoading(false)
+        errorAlert();
+      });
   };
   return (
     <div className="flex justify-center items-center h-full">
@@ -28,11 +42,7 @@ const Login = () => {
               className="input"
               placeholder="Password"
             />
-            <input
-              type="submit"
-              value="Login"
-              className="btn btn-secondary mt-5"
-            />
+            <SubmitBtn txt='Login'></SubmitBtn>
           </fieldset>
         </form>
         <GoogleBtn></GoogleBtn>

@@ -1,5 +1,8 @@
 import React from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { errorAlert, successAlert } from "../../utilities/alerts";
+import useAuth from "../../hooks/useAuth";
+import SubmitBtn from "./SubmitBtn";
 
 const StudentRegister = () => {
   const {
@@ -14,9 +17,25 @@ const StudentRegister = () => {
     name: "password",
     defaultValue: "",
   });
-  const studentRegister = (data) => {
-    console.log(data);
+
+  const { setLoading, signUp, update } = useAuth();
+
+  const studentRegister = async (data) => {
+    try {
+      const result = await signUp(data.email, data.password);
+      if (result.user.accessToken) {
+        const name = `${data.firstName} ${data.lastName}`;
+        const updateRes = await update({ displayName: name });
+        console.log(updateRes);
+        successAlert("Registration Successful");
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      errorAlert();
+    }
   };
+
   return (
     <div>
       <form onSubmit={handleSubmit(studentRegister)}>
@@ -93,11 +112,7 @@ const StudentRegister = () => {
               {errors.confirmPassword.message}
             </span>
           )}
-          <input
-            type="submit"
-            value="Register"
-            className="btn btn-secondary mt-5"
-          />
+          <SubmitBtn txt='Register As Student'></SubmitBtn>
         </fieldset>
       </form>
     </div>

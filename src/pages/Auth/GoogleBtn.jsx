@@ -9,7 +9,7 @@ const GoogleBtn = () => {
     googleLogin()
       .then((result) => {
         if (result.user.accessToken) {
-          successAlert("Login Successful");
+          successAlert();
         }
       })
       .catch((error) => {

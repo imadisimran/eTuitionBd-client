@@ -1,6 +1,8 @@
 import React from "react";
 import { useForm, useWatch } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
+import SubmitBtn from "./SubmitBtn";
+import { errorAlert, successAlert } from "../../utilities/alerts";
 
 const TutorRegister = () => {
   const {
@@ -17,10 +19,22 @@ const TutorRegister = () => {
     defaultValue: "",
   });
 
-  const {googleLogin}=useAuth()
+  const { setLoading, signUp, update } = useAuth();
 
-  const tutorRegister = (data) => {
-    
+  const tutorRegister = async (data) => {
+    try {
+      const result = await signUp(data.email, data.password);
+      if (result.user.accessToken) {
+        const name = `${data.firstName} ${data.lastName}`;
+        const updateRes = await update({ displayName: name });
+        console.log(updateRes)
+        successAlert("Registration Successful");
+      }
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+      errorAlert();
+    }
   };
 
   return (
@@ -58,7 +72,7 @@ const TutorRegister = () => {
           {/* Institution - Not Required */}
           <label className="label">Institution</label>
           <input
-            {...register("institution")} 
+            {...register("institution")}
             type="text"
             className="input"
             placeholder="Institution"
@@ -116,11 +130,7 @@ const TutorRegister = () => {
             </span>
           )}
 
-          <input
-            type="submit"
-            value="Register"
-            className="btn btn-secondary mt-5"
-          />
+          <SubmitBtn txt="Register As Tutor"></SubmitBtn>
         </fieldset>
       </form>
     </div>
