@@ -54,7 +54,7 @@ const Navbar = () => {
           <ul className="menu menu-horizontal px-1">{links}</ul>
         </div>
         <div className="navbar-end gap-5">
-          <Link className="btn btn-primary">Login</Link>
+          <Link className="btn btn-primary" to='/login'>Login</Link>
           <Link className="btn btn-secondary">Post Tuition</Link>
         </div>
       </div>
