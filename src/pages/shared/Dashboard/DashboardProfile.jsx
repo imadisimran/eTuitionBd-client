@@ -4,11 +4,18 @@ import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useForm, useWatch } from "react-hook-form";
 import axios from "axios";
+import {
+  confirmation,
+  errorAlert,
+  successAlert,
+} from "../../../utilities/alerts";
 
 const DashboardProfile = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { data: foundUser } = useQuery({
+
+  // 1. Fetch User Data
+  const { data: foundUser, isLoading: isUserLoading } = useQuery({
     queryKey: ["user", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
@@ -17,142 +24,252 @@ const DashboardProfile = () => {
     enabled: !!user?.email,
   });
 
-  const { data: divisionDistrict = [] } = useQuery({
-    queryKey: ["division"],
-    queryFn: async () => {
-      const result = await axios.get("/division-district.json");
-      return result.data;
-    },
-  });
+  // 2. Fetch Division Data
+  const { data: divisionDistrict = [], isLoading: isDivisionLoading } =
+    useQuery({
+      queryKey: ["division"],
+      queryFn: async () => {
+        const result = await axios.get("/division-district.json");
+        return result.data;
+      },
+    });
 
-  const { register, handleSubmit, control } = useForm();
+  const { register, handleSubmit, control, setValue } = useForm();
+
+  // 3. Watch for changes in Division
+  const selectedDivision = useWatch({ control, name: "division" });
 
   const updateForm = (data) => {
-    console.log(data);
+    confirmation(
+      "Are you sure about updating?",
+      "This information will be saved to your profile",
+      "Yes Update",
+      () => {
+        axiosSecure
+          .patch("/user", data)
+          .then((result) => {
+            if (result.data.modifiedCount) {
+              successAlert("Updated Successfully");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            errorAlert("Something went wrong");
+          });
+      }
+    );
   };
 
   const divisions = divisionDistrict?.map((d) => d.division);
-  const selectedDivision = useWatch({ name: "division", control });
+
   const getDistricts = (division) => {
+    // If user hasn't selected a new division yet, use the one from the database
+    const currentDivision = division || foundUser?.studentProfile?.division;
+
+    if (!currentDivision) return [];
+
     const choosenDivison = divisionDistrict.find(
-      (d) => d.division === division
+      (d) => d.division === currentDivision
     );
-    const districts = choosenDivison?.district;
-    return districts;
+    return choosenDivison?.district || [];
   };
 
-  // console.log(foundUser)
+  // --- CRITICAL STEP ---
+  // You MUST wait for loading to finish.
+  // If you don't, the defaultValues below will be undefined and won't work.
+  if (isUserLoading || isDivisionLoading || !foundUser) {
+    return (
+      <div className="p-10 text-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex gap-10">
-      {/* Image and little information div */}
+      {/* Profile Image */}
       <div>
-        <div className="w-30 h-30 border">
+        <div className="w-30 h-30 border rounded-full overflow-hidden">
           <img
-            className="rounded-full"
+            className="w-full h-full object-cover"
             src={foundUser?.photoURL}
             alt={foundUser?.displayName}
           />
         </div>
         <h2 className="text-2xl font-bold mt-5">{foundUser?.displayName}</h2>
       </div>
-      <div>
-        <form className="flex gap-5" onSubmit={handleSubmit(updateForm)}>
-          <div>
-            <fieldset className="fieldset">
-              <label className="label">Name</label>
-              <input
-                {...register("name")}
-                type="text"
-                className="input"
-                placeholder="Name"
-              />
-              <label className="label">Email</label>
-              <input
-                {...register("email")}
-                type="email"
-                className="input"
-                placeholder="Email"
-              />
-              <label className="label">Phone</label>
-              <input
-                {...register("phone")}
-                type="text"
-                className="input"
-                placeholder="Phone"
-              />
+
+      {/* Form */}
+      <div className="flex-1">
+        <form
+          className="flex flex-col gap-5"
+          onSubmit={handleSubmit(updateForm)}
+        >
+          {/* Personal Info */}
+          <div className="border p-5 rounded-lg">
+            <h2 className="text-xl mb-3 font-semibold">Personal Info</h2>
+            <fieldset className="fieldset grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* NAME */}
+              <div>
+                <label className="label">Name</label>
+                <input
+                  {...register("name")}
+                  defaultValue={foundUser?.displayName}
+                  readOnly
+                  type="text"
+                  className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
+                  placeholder="Name"
+                />
+              </div>
+
+              {/* EMAIL */}
+              <div>
+                <label className="label">Email</label>
+                <input
+                  {...register("email")}
+                  defaultValue={user?.email}
+                  readOnly
+                  type="email"
+                  className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
+                />
+              </div>
+
+              {/* PHONE */}
+              <div>
+                <label className="label">Phone</label>
+                <input
+                  {...register("phone")}
+                  defaultValue={foundUser?.phone}
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder="Phone"
+                />
+              </div>
             </fieldset>
           </div>
 
-          <div>
-            <fieldset className="fieldset">
-              <label className="label">Class</label>
-              <select
-                {...register("studentClass")}
-                defaultValue=""
-                className="select"
-              >
-                <option disabled value="">
-                  Select Your Class
-                </option>
-                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                  <option key={num} value={`class${num}`}>
-                    Class {num}
+          {/* Location Info */}
+          <div className="border p-5 rounded-lg">
+            <h2 className="text-xl mb-3 font-semibold">Academic & Location</h2>
+            <fieldset className="fieldset grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* CLASS */}
+              <div>
+                <label className="label">Class</label>
+                <select
+                  {...register("studentClass")}
+                  defaultValue={foundUser?.studentProfile?.studentClass || ""}
+                  className="select select-bordered w-full"
+                >
+                  <option disabled value="">
+                    Select Class
                   </option>
-                ))}
-                <option value="hsc1">HSC 1st Year</option>
-                <option value="hsc2">HSC 2nd Year</option>
-              </select>
-              <label className="label">Division</label>
-              <select
-                {...register("division")}
-                defaultValue=""
-                className="select"
-              >
-                <option disabled value="">
-                  Select Your Division
-                </option>
-                {divisions?.map((d, i) => (
-                  <option key={i} value={d}>
-                    {d}
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                    <option key={num} value={`class${num}`}>
+                      Class {num}
+                    </option>
+                  ))}
+                  <option value="hsc1">HSC 1st Year</option>
+                  <option value="hsc2">HSC 2nd Year</option>
+                </select>
+              </div>
+
+              {/* DIVISION */}
+              <div>
+                <label className="label">Division</label>
+                <select
+                  {...register("division")}
+                  defaultValue={foundUser?.studentProfile?.division || ""}
+                  className="select select-bordered w-full"
+                  onChange={(e) => {
+                    register("division").onChange(e); // Notify RHF
+                    setValue("district", ""); // Reset district when division changes
+                  }}
+                >
+                  <option disabled value="">
+                    Select Division
                   </option>
-                ))}
-              </select>
-              <label className="label">District</label>
-              <select
-                {...register("district")}
-                defaultValue=""
-                className="select"
-              >
-                <option disabled value="">
-                  Select Your District
-                </option>
-                {getDistricts(selectedDivision)?.map((d, i) => (
-                  <option key={i} value={d}>
-                    {d}
+                  {divisions?.map((d, i) => (
+                    <option key={i} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* DISTRICT */}
+              <div>
+                <label className="label">District</label>
+                <select
+                  {...register("district")}
+                  defaultValue={foundUser?.studentProfile?.district || ""}
+                  className="select select-bordered w-full"
+                >
+                  <option disabled value="">
+                    Select District
                   </option>
-                ))}
-              </select>
+                  {getDistricts(selectedDivision).map((d, i) => (
+                    <option key={i} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              {/* ADDRESS */}
+              <div className="md:col-span-3">
+                <label className="label">Full Address</label>
+                <input
+                  {...register("address")}
+                  defaultValue={foundUser?.studentProfile?.address || ""}
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder="House No, Road No, Area, etc."
+                />
+              </div>
             </fieldset>
           </div>
-          <div>
-            <fieldset className="fieldset">
-              <label className="label">Relation</label>
-              <select
-                {...register("guardianRelation")}
-                defaultValue=""
-                className="select"
-              >
-                <option disabled value="">
-                  Select Your Relation
-                </option>
-                <option value="father">Father</option>
-                <option value="mother">Mother</option>
-                <option value="others">Others</option>
-              </select>
-              <label className="label">Guardian Phone</label>
-              <input type="text" className="input" placeholder="Phone" />
+
+          {/* Guardian Info */}
+          <div className="border p-5 rounded-lg">
+            <h2 className="text-xl mb-3 font-semibold">Guardian Info</h2>
+            <fieldset className="fieldset grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* RELATION */}
+              <div>
+                <label className="label">Relation</label>
+                <select
+                  {...register("guardianRelation")}
+                  defaultValue={
+                    foundUser?.studentProfile?.guardianInfo?.relation || ""
+                  }
+                  className="select select-bordered w-full"
+                >
+                  <option disabled value="">
+                    Select Relation
+                  </option>
+                  <option value="father">Father</option>
+                  <option value="mother">Mother</option>
+                  <option value="others">Others</option>
+                </select>
+              </div>
+
+              {/* GUARDIAN PHONE */}
+              <div>
+                <label className="label">Guardian Phone</label>
+                <input
+                  {...register("guardianPhone")}
+                  defaultValue={
+                    foundUser?.studentProfile?.guardianInfo?.phone || ""
+                  }
+                  type="text"
+                  className="input input-bordered w-full"
+                  placeholder="Guardian Phone"
+                />
+              </div>
             </fieldset>
           </div>
+
+          <button type="submit" className="btn btn-primary w-full md:w-auto">
+            Update Profile
+          </button>
         </form>
       </div>
     </div>
