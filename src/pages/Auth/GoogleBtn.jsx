@@ -1,13 +1,28 @@
 import React from "react";
+import useAuth from "../../hooks/useAuth";
+import { errorAlert, successAlert } from "../../utilities/alerts";
 
 const GoogleBtn = () => {
+  const { googleLogin } = useAuth();
 
-    const handleGoogleLogin=()=>{
-        console.log('Button Clicked')
-    }
-    
+  const handleGoogleLogin = () => {
+    googleLogin()
+      .then((result) => {
+        if (result.user.accessToken) {
+          successAlert("Login Successful");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        errorAlert();
+      });
+  };
+
   return (
-    <button onClick={handleGoogleLogin} className="btn bg-white text-black border-[#e5e5e5] w-full">
+    <button
+      onClick={handleGoogleLogin}
+      className="btn bg-white text-black border-[#e5e5e5] w-full"
+    >
       <svg
         aria-label="Google logo"
         width="16"

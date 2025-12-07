@@ -1,5 +1,6 @@
 import React from "react";
 import { useForm, useWatch } from "react-hook-form";
+import useAuth from "../../hooks/useAuth";
 
 const TutorRegister = () => {
   const {
@@ -16,8 +17,10 @@ const TutorRegister = () => {
     defaultValue: "",
   });
 
+  const {googleLogin}=useAuth()
+
   const tutorRegister = (data) => {
-    console.log(data);
+    
   };
 
   return (
