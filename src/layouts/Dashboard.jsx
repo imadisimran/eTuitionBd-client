@@ -1,8 +1,10 @@
 import React from "react";
 import { CgProfile } from "react-icons/cg";
 import { Link, Outlet } from "react-router";
+import logo from '../assets/logo.png'
 
 const Dashboard = () => {
+    
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -30,7 +32,9 @@ const Dashboard = () => {
               <path d="M14 10l2 2l-2 2"></path>
             </svg>
           </label>
-          <div className="px-4">Navbar Title</div>
+          <Link to='/' className="px-4 w-[150px]">
+            <img src={logo} alt="" />
+          </Link>
         </nav>
         {/* Page content here */}
         <div className="p-4">

@@ -17,7 +17,7 @@ const GoogleBtn = () => {
             email:result.user.email,
             photoURL:result.user.photoURL
           }
-          axiosSecure.post('/users',data)
+          axiosSecure.post('/user',data)
           .then(data=>{
             console.log(data.data)
           })
