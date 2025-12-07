@@ -2,61 +2,17 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Link } from "react-router";
 import GoogleBtn from "./GoogleBtn";
+import StudentRegister from "./StudentRegister";
+import TutorRegister from "./TutorRegister";
 
 const tabs = [
   {
     label: "Register As Student",
-    content: (
-      <div>
-        <form>
-          <fieldset className="fieldset">
-            <label className="label">First Name</label>
-            <input type="text" className="input" placeholder="First Name" />
-            <label className="label">Last Name</label>
-            <input type="text" className="input" placeholder="Last Name" />
-            <label className="label">Email</label>
-            <input type="email" className="input" placeholder="Email" />
-            <label className="label">Password</label>
-            <input type="password" className="input" placeholder="Password" />
-            <label className="label">Confirm Password</label>
-            <input
-              type="password"
-              className="input"
-              placeholder="Enter Password Again"
-            />
-            <input
-              type="submit"
-              value="Register"
-              className="btn btn-secondary mt-5"
-            />
-          </fieldset>
-        </form>
-      </div>
-    ),
+    content: <StudentRegister></StudentRegister>
   },
   {
     label: "Register As Tutor",
-    content: (
-      <form>
-        <fieldset className="fieldset">
-          <label className="label">First Name</label>
-          <input type="text" className="input" placeholder="First Name" />
-          <label className="label">Last Name</label>
-          <input type="text" className="input" placeholder="Last Name" />
-          <label className="label">Institution</label>
-          <input type="text" className="input" placeholder="Institution" />
-          <label className="label">Email</label>
-          <input type="email" className="input" placeholder="Email" />
-          <label className="label">Password</label>
-          <input type="password" className="input" placeholder="Password" />
-          <input
-            type="submit"
-            value="Register"
-            className="btn btn-secondary mt-5"
-          />
-        </fieldset>
-      </form>
-    ),
+    content: <TutorRegister></TutorRegister>
   },
 ];
 

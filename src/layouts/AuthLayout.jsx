@@ -5,11 +5,11 @@ import Register from "../pages/Auth/Register";
 
 const AuthLayout = () => {
   return (
-    <div className="flex h-screen">
-      <div className="hidden sm:block">
-        <img className="h-screen" src={authImage} alt="Authentication Image" />
+    <div className="flex min-h-screen items-center">
+      <div className="hidden sm:block h-screen">
+        <img className="h-full" src={authImage} alt="Authentication Image" />
       </div>
-      <div className="flex-1 h-screen">
+      <div className="flex-1 h-full">
         <Outlet></Outlet>
       </div>
     </div>
