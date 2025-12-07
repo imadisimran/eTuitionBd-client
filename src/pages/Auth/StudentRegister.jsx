@@ -18,7 +18,7 @@ const StudentRegister = () => {
     defaultValue: "",
   });
 
-  const { setLoading, signUp, update } = useAuth();
+  const { signUp, update } = useAuth();
 
   const studentRegister = async (data) => {
     try {
@@ -31,7 +31,6 @@ const StudentRegister = () => {
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
       errorAlert();
     }
   };

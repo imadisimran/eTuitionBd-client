@@ -7,7 +7,7 @@ import { errorAlert, successAlert } from "../../utilities/alerts";
 import SubmitBtn from "./SubmitBtn";
 
 const Login = () => {
-  const { signIn,setLoading } = useAuth();
+  const { signIn } = useAuth();
   const { register, handleSubmit } = useForm();
   const handleLogin = (data) => {
     signIn(data.email, data.password)
@@ -18,7 +18,6 @@ const Login = () => {
       })
       .catch((error) => {
         console.log(error);
-        setLoading(false)
         errorAlert();
       });
   };

@@ -1,15 +1,27 @@
 import React from "react";
 import useAuth from "../../hooks/useAuth";
 import { errorAlert, successAlert } from "../../utilities/alerts";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const GoogleBtn = () => {
   const { googleLogin } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
   const handleGoogleLogin = () => {
     googleLogin()
       .then((result) => {
         if (result.user.accessToken) {
           successAlert();
+          const data={
+            displayName:result.user.displayName,
+            email:result.user.email,
+            photoURL:result.user.photoURL
+          }
+          axiosSecure.post('/users',data)
+          .then(data=>{
+            console.log(data.data)
+          })
+           
         }
       })
       .catch((error) => {

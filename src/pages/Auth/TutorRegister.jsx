@@ -19,7 +19,7 @@ const TutorRegister = () => {
     defaultValue: "",
   });
 
-  const { setLoading, signUp, update } = useAuth();
+  const {signUp, update } = useAuth();
 
   const tutorRegister = async (data) => {
     try {
@@ -27,12 +27,11 @@ const TutorRegister = () => {
       if (result.user.accessToken) {
         const name = `${data.firstName} ${data.lastName}`;
         const updateRes = await update({ displayName: name });
-        console.log(updateRes)
+        console.log(updateRes);
         successAlert("Registration Successful");
       }
     } catch (error) {
       console.log(error);
-      setLoading(false);
       errorAlert();
     }
   };
