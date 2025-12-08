@@ -9,6 +9,7 @@ import {
   errorAlert,
   successAlert,
 } from "../../../utilities/alerts";
+import CircularProgress from "./CircularProgress";
 
 const DashboardProfile = () => {
   const { user } = useAuth();
@@ -81,6 +82,7 @@ const DashboardProfile = () => {
           .then((result) => {
             if (result.data.modifiedCount) {
               successAlert("Updated Successfully");
+              refetch()
             }
           })
           .catch((error) => {
@@ -152,7 +154,8 @@ const DashboardProfile = () => {
             Update Profile Picture
           </button>
         </form>
-        <h2 className="text-2xl font-bold mt-5">{foundUser?.displayName}</h2>
+        <h2 className="text-2xl font-bold mt-5 mb-10 text-center">{foundUser?.displayName}</h2>
+        <CircularProgress percentage={foundUser?.profileStatus?.percent}></CircularProgress>
       </div>
 
       {/* Form */}
