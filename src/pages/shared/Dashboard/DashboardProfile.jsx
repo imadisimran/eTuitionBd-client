@@ -15,7 +15,11 @@ const DashboardProfile = () => {
   const axiosSecure = useAxiosSecure();
 
   // 1. Fetch User Data
-  const { data: foundUser = {}, isLoading: isUserLoading } = useQuery({
+  const {
+    data: foundUser = {},
+    isLoading: isUserLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["user", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
@@ -73,7 +77,7 @@ const DashboardProfile = () => {
       "Yes Update",
       () => {
         axiosSecure
-          .patch("/user", data)
+          .patch(`/user?email=${user?.email}`, data)
           .then((result) => {
             if (result.data.modifiedCount) {
               successAlert("Updated Successfully");
@@ -85,6 +89,43 @@ const DashboardProfile = () => {
           });
       }
     );
+  };
+
+  const handleUpdateProfilePicture = async (e) => {
+    e.preventDefault();
+    const profilePicture = e.target.profilePic.files[0];
+
+    if (!profilePicture) {
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("image", profilePicture);
+
+    try {
+      const result = await axios.post(
+        `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imageApi}`,
+        formData
+      );
+
+      if (result.data.success) {
+        const data = {
+          photoURL: result.data.data.display_url,
+          icon: result.data.data.thumb?.url || result.data.data.display_url,
+          deleteURL: result.data.data.delete_url,
+        };
+
+        const result2 = await axiosSecure.patch(`/user?email=${user?.email}`, data);
+
+        if (result2.data.modifiedCount) {
+          successAlert("Uploaded successfully");
+          refetch();
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      errorAlert("Something went wrong");
+    }
   };
 
   // console.log(foundUser);
@@ -100,6 +141,17 @@ const DashboardProfile = () => {
             alt={foundUser?.displayName}
           />
         </div>
+        {/* Update Profile Image */}
+        <form onSubmit={handleUpdateProfilePicture} className="max-w-[200px]">
+          <input
+            name="profilePic"
+            type="file"
+            className="file-input file-input-xs"
+          />
+          <button className="btn-secondary btn-xs btn">
+            Update Profile Picture
+          </button>
+        </form>
         <h2 className="text-2xl font-bold mt-5">{foundUser?.displayName}</h2>
       </div>
 
@@ -117,7 +169,7 @@ const DashboardProfile = () => {
               <div>
                 <label className="label">Name</label>
                 <input
-                  {...register("name")}
+                  // {...register("name")}
                   defaultValue={foundUser?.displayName}
                   readOnly
                   type="text"
@@ -130,7 +182,7 @@ const DashboardProfile = () => {
               <div>
                 <label className="label">Email</label>
                 <input
-                  {...register("email")}
+                  // {...register("email")}
                   defaultValue={user?.email}
                   readOnly
                   type="email"
