@@ -5,8 +5,9 @@ import AuthLayout from "../layouts/AuthLayout";
 import Register from "../pages/Auth/Register";
 import Login from "../pages/Auth/Login";
 import Dashboard from "../layouts/Dashboard";
-import DashboardHome from "../pages/shared/Dashboard/DashboardHome";
-import DashboardProfile from "../pages/shared/Dashboard/DashboardProfile";
+import DashboardHome from "../pages/Dashboard/DashboardHome";
+import DashboardProfile from "../pages/Dashboard/DashboardProfile";
+import MyTuitions from "../pages/Dashboard/MyTuitions";
 
 const router = createBrowserRouter([
   {
@@ -29,13 +30,14 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path:'/dashboard',
-    element:<Dashboard></Dashboard>,
-    children:[
-      {index:true,element:<DashboardHome></DashboardHome>},
-      {path:'profile',element:<DashboardProfile></DashboardProfile>}
-    ]
-  }
+    path: "/dashboard",
+    element: <Dashboard></Dashboard>,
+    children: [
+      { index: true, element: <DashboardHome></DashboardHome> },
+      { path: "profile", element: <DashboardProfile></DashboardProfile> },
+      { path: "my-tuitions", element: <MyTuitions></MyTuitions> },
+    ],
+  },
 ]);
 
 export default router;

@@ -1,14 +1,10 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import useAuth from "../../../hooks/useAuth";
-import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useForm, useWatch } from "react-hook-form";
 import axios from "axios";
-import {
-  confirmation,
-  errorAlert,
-  successAlert,
-} from "../../../utilities/alerts";
+import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 import CircularProgress from "./CircularProgress";
 
 const DashboardProfile = () => {
@@ -82,7 +78,7 @@ const DashboardProfile = () => {
           .then((result) => {
             if (result.data.modifiedCount) {
               successAlert("Updated Successfully");
-              refetch()
+              refetch();
             }
           })
           .catch((error) => {
@@ -117,7 +113,10 @@ const DashboardProfile = () => {
           deleteURL: result.data.data.delete_url,
         };
 
-        const result2 = await axiosSecure.patch(`/user?email=${user?.email}`, data);
+        const result2 = await axiosSecure.patch(
+          `/user?email=${user?.email}`,
+          data
+        );
 
         if (result2.data.modifiedCount) {
           successAlert("Uploaded successfully");
@@ -154,8 +153,12 @@ const DashboardProfile = () => {
             Update Profile Picture
           </button>
         </form>
-        <h2 className="text-2xl font-bold mt-5 mb-10 text-center">{foundUser?.displayName}</h2>
-        <CircularProgress percentage={foundUser?.profileStatus?.percent}></CircularProgress>
+        <h2 className="text-2xl font-bold mt-5 mb-10 text-center">
+          {foundUser?.displayName}
+        </h2>
+        <CircularProgress
+          percentage={foundUser?.profileStatus?.percent}
+        ></CircularProgress>
       </div>
 
       {/* Form */}
