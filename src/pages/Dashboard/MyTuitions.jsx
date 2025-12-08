@@ -4,7 +4,7 @@ import MyTuitionsStudent from "./MyTuitionsStudent";
 
 const MyTuitions = () => {
   const [role] = useRole();
-  console.log(role)
+  // console.log(role)
   if (role === "student") {
     return <MyTuitionsStudent></MyTuitionsStudent>;
   }
