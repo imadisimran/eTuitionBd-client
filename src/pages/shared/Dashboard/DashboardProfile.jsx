@@ -15,7 +15,7 @@ const DashboardProfile = () => {
   const axiosSecure = useAxiosSecure();
 
   // 1. Fetch User Data
-  const { data: foundUser, isLoading: isUserLoading } = useQuery({
+  const { data: foundUser = {}, isLoading: isUserLoading } = useQuery({
     queryKey: ["user", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
@@ -39,6 +39,33 @@ const DashboardProfile = () => {
   // 3. Watch for changes in Division
   const selectedDivision = useWatch({ control, name: "division" });
 
+  const divisions = divisionDistrict?.map((d) => d.division);
+
+  const getDistricts = (division) => {
+    // If user hasn't selected a new division yet, use the one from the database
+    const currentDivision = division || foundUser?.studentInfo?.division;
+
+    if (!currentDivision) return [];
+
+    const choosenDivison = divisionDistrict.find(
+      (d) => d.division === currentDivision
+    );
+    return choosenDivison?.district || [];
+  };
+
+  //Wait for default values to load
+  if (
+    isUserLoading ||
+    isDivisionLoading ||
+    Object.keys(foundUser).length === 0
+  ) {
+    return (
+      <div className="p-10 text-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
+
   const updateForm = (data) => {
     confirmation(
       "Are you sure about updating?",
@@ -60,30 +87,7 @@ const DashboardProfile = () => {
     );
   };
 
-  const divisions = divisionDistrict?.map((d) => d.division);
-
-  const getDistricts = (division) => {
-    // If user hasn't selected a new division yet, use the one from the database
-    const currentDivision = division || foundUser?.studentProfile?.division;
-
-    if (!currentDivision) return [];
-
-    const choosenDivison = divisionDistrict.find(
-      (d) => d.division === currentDivision
-    );
-    return choosenDivison?.district || [];
-  };
-
-  // --- CRITICAL STEP ---
-  // You MUST wait for loading to finish.
-  // If you don't, the defaultValues below will be undefined and won't work.
-  if (isUserLoading || isDivisionLoading || !foundUser) {
-    return (
-      <div className="p-10 text-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
+  // console.log(foundUser);
 
   return (
     <div className="flex gap-10">
@@ -157,7 +161,7 @@ const DashboardProfile = () => {
                 <label className="label">Class</label>
                 <select
                   {...register("studentClass")}
-                  defaultValue={foundUser?.studentProfile?.studentClass || ""}
+                  defaultValue={foundUser?.studentInfo?.class || ""}
                   className="select select-bordered w-full"
                 >
                   <option disabled value="">
@@ -178,7 +182,7 @@ const DashboardProfile = () => {
                 <label className="label">Division</label>
                 <select
                   {...register("division")}
-                  defaultValue={foundUser?.studentProfile?.division || ""}
+                  defaultValue={foundUser?.studentInfo?.division || ""}
                   className="select select-bordered w-full"
                   onChange={(e) => {
                     register("division").onChange(e); // Notify RHF
@@ -201,7 +205,7 @@ const DashboardProfile = () => {
                 <label className="label">District</label>
                 <select
                   {...register("district")}
-                  defaultValue={foundUser?.studentProfile?.district || ""}
+                  defaultValue={foundUser?.studentInfo?.district || ""}
                   className="select select-bordered w-full"
                 >
                   <option disabled value="">
@@ -219,7 +223,7 @@ const DashboardProfile = () => {
                 <label className="label">Full Address</label>
                 <input
                   {...register("address")}
-                  defaultValue={foundUser?.studentProfile?.address || ""}
+                  defaultValue={foundUser?.studentInfo?.address || ""}
                   type="text"
                   className="input input-bordered w-full"
                   placeholder="House No, Road No, Area, etc."
@@ -238,7 +242,7 @@ const DashboardProfile = () => {
                 <select
                   {...register("guardianRelation")}
                   defaultValue={
-                    foundUser?.studentProfile?.guardianInfo?.relation || ""
+                    foundUser?.studentInfo?.guardian?.relation || ""
                   }
                   className="select select-bordered w-full"
                 >
@@ -256,9 +260,7 @@ const DashboardProfile = () => {
                 <label className="label">Guardian Phone</label>
                 <input
                   {...register("guardianPhone")}
-                  defaultValue={
-                    foundUser?.studentProfile?.guardianInfo?.phone || ""
-                  }
+                  defaultValue={foundUser?.studentInfo?.guardian?.phone || ""}
                   type="text"
                   className="input input-bordered w-full"
                   placeholder="Guardian Phone"
