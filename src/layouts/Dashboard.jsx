@@ -1,11 +1,14 @@
 import React from "react";
 import { CgProfile } from "react-icons/cg";
 import { Link, Outlet } from "react-router";
-import logo from '../assets/logo.png'
+import logo from "../assets/logo.png";
 import { FaChalkboardTeacher } from "react-icons/fa";
+import { MdOutlinePendingActions } from "react-icons/md";
+import useRole from "../hooks/useRole";
 
 const Dashboard = () => {
-    
+  const [role] = useRole();
+
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -33,13 +36,13 @@ const Dashboard = () => {
               <path d="M14 10l2 2l-2 2"></path>
             </svg>
           </label>
-          <Link to='/' className="px-4 w-[150px]">
+          <Link to="/" className="px-4 w-[150px]">
             <img src={logo} alt="" />
           </Link>
         </nav>
         {/* Page content here */}
         <div className="p-4">
-            <Outlet></Outlet>
+          <Outlet></Outlet>
         </div>
       </div>
 
@@ -54,7 +57,8 @@ const Dashboard = () => {
           <ul className="menu w-full grow">
             {/* List item */}
             <li>
-              <Link to='/dashboard'
+              <Link
+                to="/dashboard"
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                 data-tip="Homepage"
               >
@@ -77,9 +81,10 @@ const Dashboard = () => {
             </li>
 
             {/* List item */}
+
             <li>
               <Link
-              to='/dashboard/profile'
+                to="/dashboard/profile"
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                 data-tip="Profile"
               >
@@ -87,16 +92,38 @@ const Dashboard = () => {
                 <span className="is-drawer-close:hidden">Profile</span>
               </Link>
             </li>
-            <li>
-              <Link
-              to='/dashboard/my-tuitions'
-                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="My Tuition"
-              >
-                <FaChalkboardTeacher/>
-                <span className="is-drawer-close:hidden">My Tuition</span>
-              </Link>
-            </li>
+
+            {role === "student" && (
+              <>
+                <li>
+                  <Link
+                    to="/dashboard/my-tuitions"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="My Tuition"
+                  >
+                    <FaChalkboardTeacher />
+                    <span className="is-drawer-close:hidden">My Tuition</span>
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {role === "admin" && (
+              <>
+                <li>
+                  <Link
+                    to="/dashboard/pending-tuitions"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Pending Tuitions"
+                  >
+                    <MdOutlinePendingActions />
+                    <span className="is-drawer-close:hidden">
+                      Pending Tuitions
+                    </span>
+                  </Link>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>

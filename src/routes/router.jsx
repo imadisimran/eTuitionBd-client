@@ -9,6 +9,8 @@ import DashboardHome from "../pages/Dashboard/DashboardHome";
 import DashboardProfile from "../pages/Dashboard/DashboardProfile";
 import MyTuitions from "../pages/Dashboard/MyTuitions";
 import PrivateRoute from "./PrivateRoute";
+import PendingTuitions from "../pages/Dashboard/PendingTuitions";
+import AdminRoute from "./AdminRoute";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +43,14 @@ const router = createBrowserRouter([
       { index: true, element: <DashboardHome></DashboardHome> },
       { path: "profile", element: <DashboardProfile></DashboardProfile> },
       { path: "my-tuitions", element: <MyTuitions></MyTuitions> },
+      {
+        path: "pending-tuitions",
+        element: (
+          <AdminRoute>
+            <PendingTuitions></PendingTuitions>
+          </AdminRoute>
+        ),
+      },
     ],
   },
 ]);
