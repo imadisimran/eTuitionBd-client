@@ -48,6 +48,7 @@ const MyTuitionsStudent = () => {
                 <th>Subject</th>
                 <th>Posted At</th>
                 <th>Budget</th>
+                <th>Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -58,9 +59,12 @@ const MyTuitionsStudent = () => {
                 return (
                   <tr key={tuition._id}>
                     <td>{index + 1}</td>
-                    <td className="capitalize">{tuition.subject}</td>
+                    <td className="capitalize">
+                      {tuition.subject.split("_").join(" ")}
+                    </td>
                     <td>{longDate(tuition.createdAt)}</td>
                     <td>{`BDT ${min}-${max}`}</td>
+                    <td>{tuition.status}</td>
                     <td className="space-x-5">
                       <button className="btn btn-primary btn-sm">Edit</button>
                       <button
