@@ -32,7 +32,7 @@ const PostNewTuitionForm = () => {
     formState: { errors },
   } = useForm();
 
-  const { data: foundUser = {} } = useQuery({
+  const { data: foundUser = {}, refetch } = useQuery({
     queryKey: [user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
@@ -46,9 +46,10 @@ const PostNewTuitionForm = () => {
       .post(`/tuitions?email=${user?.email}`, data)
       .then((result) => {
         if (result.data) {
-          successAlert("Posted successfully");
-          reset(); // Clear the form
           formRef.current.close(); // Close modal
+          reset(); // Clear the form
+          refetch();
+          successAlert("Posted successfully");
         }
       })
       .catch((error) => {
@@ -83,7 +84,10 @@ const PostNewTuitionForm = () => {
             Post New Tuition
           </h2>
 
-          <form onSubmit={handleSubmit(handlePostTuition)} className="space-y-4">
+          <form
+            onSubmit={handleSubmit(handlePostTuition)}
+            className="space-y-4"
+          >
             {/* --- Row 1: Name & Email --- */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-control">

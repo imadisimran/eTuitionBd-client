@@ -4,17 +4,37 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import PostNewTuitionForm from "./PostNewTuitionForm";
 import { longDate } from "../../utilities/formatDate";
+import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 
 const MyTuitionsStudent = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { data: tuitions = [] } = useQuery({
+  const { data: tuitions = [], refetch } = useQuery({
     queryKey: [user?.email, "tuitions"],
     queryFn: async () => {
       const result = await axiosSecure.get(`/tuitions?email=${user?.email}`);
       return result.data;
     },
   });
+  const handleDelete = (id) => {
+    confirmation(
+      "Are you want to delete this post",
+      "You won't be able to revert it",
+      "Delete",
+      async () => {
+        try {
+          const result = await axiosSecure.delete(`/tuition/${id}`);
+          if (result.data.deletedCount) {
+            successAlert("Deleted Successfully");
+            refetch();
+          }
+        } catch (error) {
+          console.log(error);
+          errorAlert();
+        }
+      }
+    );
+  };
   return (
     <div>
       <PostNewTuitionForm></PostNewTuitionForm>
@@ -43,7 +63,10 @@ const MyTuitionsStudent = () => {
                     <td>{`BDT ${min}-${max}`}</td>
                     <td className="space-x-5">
                       <button className="btn btn-primary btn-sm">Edit</button>
-                      <button className="btn btn-secondary btn-sm">
+                      <button
+                        onClick={() => handleDelete(tuition._id)}
+                        className="btn btn-secondary btn-sm"
+                      >
                         Delete
                       </button>
                     </td>
