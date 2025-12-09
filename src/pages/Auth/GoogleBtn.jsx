@@ -2,32 +2,36 @@ import React from "react";
 import useAuth from "../../hooks/useAuth";
 import { errorAlert, successAlert } from "../../utilities/alerts";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useLocation, useNavigate } from "react-router";
 
 const GoogleBtn = () => {
   const { googleLogin } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const handleGoogleLogin = () => {
-    googleLogin()
-      .then((result) => {
-        if (result.user.accessToken) {
+  const handleGoogleLogin = async () => {
+    try {
+      const result = await googleLogin();
+      if (result.user.accessToken) {
+        const userInfo = {
+          displayName: result.user.displayName,
+          email: result.user.email,
+          photoURL: result.user.photoURL,
+        };
+
+        const { data } = await axiosSecure.post("/user", userInfo);
+        if (data) {
           successAlert();
-          const data={
-            displayName:result.user.displayName,
-            email:result.user.email,
-            photoURL:result.user.photoURL
-          }
-          axiosSecure.post('/user',data)
-          .then(data=>{
-            console.log(data.data)
-          })
-           
+          navigate(location.state || "/");
         }
-      })
-      .catch((error) => {
-        console.log(error);
-        errorAlert();
-      });
+
+        // console.log(data);
+      }
+    } catch (error) {
+      console.error(error);
+      errorAlert();
+    }
   };
 
   return (
