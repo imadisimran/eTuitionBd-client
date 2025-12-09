@@ -19,9 +19,7 @@ const Navbar = () => {
   const links = (
     <>
       <li>
-        <NavLink className="active:bg-neutral" to="/">
-          Home
-        </NavLink>
+        <NavLink to="/">Home</NavLink>
       </li>
       <li>
         <NavLink to="/tuitions">Tuitions</NavLink>

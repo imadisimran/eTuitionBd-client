@@ -1,22 +1,23 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import GoogleBtn from "./GoogleBtn";
 import StudentRegister from "./StudentRegister";
 import TutorRegister from "./TutorRegister";
 
-const tabs = [
-  {
-    label: "Register As Student",
-    content: <StudentRegister></StudentRegister>
-  },
-  {
-    label: "Register As Tutor",
-    content: <TutorRegister></TutorRegister>
-  },
-];
-
 const Register = () => {
+  const location = useLocation();
+  const tabs = [
+    {
+      label: "Register As Student",
+      content: <StudentRegister></StudentRegister>,
+    },
+    {
+      label: "Register As Tutor",
+      content: <TutorRegister></TutorRegister>,
+    },
+  ];
+
   const [activeTab, setActiveTab] = useState(tabs[0].label);
 
   return (
@@ -76,7 +77,7 @@ const Register = () => {
         <div className="divider">OR</div>
         <p className="text-center">
           Already have an account?{" "}
-          <Link to="/login" className="text-secondary">
+          <Link state={location.state} to="/login" className="text-secondary">
             Login
           </Link>
         </p>

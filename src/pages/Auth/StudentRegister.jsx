@@ -3,8 +3,13 @@ import { useForm, useWatch } from "react-hook-form";
 import { errorAlert, successAlert } from "../../utilities/alerts";
 import useAuth from "../../hooks/useAuth";
 import SubmitBtn from "./SubmitBtn";
+import { useLocation, useNavigate } from "react-router";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
 const StudentRegister = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const axiosSecure = useAxiosSecure();
   const {
     register,
     handleSubmit,
@@ -26,7 +31,18 @@ const StudentRegister = () => {
       if (result.user.accessToken) {
         const name = `${data.firstName} ${data.lastName}`;
         const updateRes = await update({ displayName: name });
-        console.log(updateRes);
+        // console.log(updateRes)
+        //Update res returns undefined
+        const formData = {
+          displayName: result.user.displayName,
+          email: result.user.email,
+          photoURL: result.user.photoURL,
+        };
+        const dbResult = await axiosSecure.post("/user", formData);
+
+        console.log(dbResult)
+
+        navigate(location.state || "/");
         successAlert("Registration Successful");
       }
     } catch (error) {
@@ -111,7 +127,7 @@ const StudentRegister = () => {
               {errors.confirmPassword.message}
             </span>
           )}
-          <SubmitBtn txt='Register As Student'></SubmitBtn>
+          <SubmitBtn txt="Register As Student"></SubmitBtn>
         </fieldset>
       </form>
     </div>

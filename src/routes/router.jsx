@@ -8,6 +8,7 @@ import Dashboard from "../layouts/Dashboard";
 import DashboardHome from "../pages/Dashboard/DashboardHome";
 import DashboardProfile from "../pages/Dashboard/DashboardProfile";
 import MyTuitions from "../pages/Dashboard/MyTuitions";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
@@ -31,7 +32,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <Dashboard></Dashboard>,
+    element: (
+      <PrivateRoute>
+        <Dashboard></Dashboard>
+      </PrivateRoute>
+    ),
     children: [
       { index: true, element: <DashboardHome></DashboardHome> },
       { path: "profile", element: <DashboardProfile></DashboardProfile> },

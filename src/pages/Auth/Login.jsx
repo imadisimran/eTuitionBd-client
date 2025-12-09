@@ -1,6 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import GoogleBtn from "./GoogleBtn";
 import useAuth from "../../hooks/useAuth";
 import { errorAlert, successAlert } from "../../utilities/alerts";
@@ -9,11 +9,14 @@ import SubmitBtn from "./SubmitBtn";
 const Login = () => {
   const { signIn } = useAuth();
   const { register, handleSubmit } = useForm();
+  const location=useLocation()
+  const navigate=useNavigate()
   const handleLogin = (data) => {
     signIn(data.email, data.password)
       .then((result) => {
         if (result.user.accessToken) {
           successAlert();
+          navigate(location.state || '/')
         }
       })
       .catch((error) => {
@@ -48,7 +51,7 @@ const Login = () => {
         <div className="divider">OR</div>
         <p className="text-center">
           Don't have an account?{" "}
-          <Link to="/register" className="text-secondary">
+          <Link state={location.state} to="/register" className="text-secondary">
             Register
           </Link>
         </p>
