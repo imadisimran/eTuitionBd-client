@@ -30,9 +30,7 @@ const StudentRegister = () => {
       const result = await signUp(data.email, data.password);
       if (result.user.accessToken) {
         const name = `${data.firstName} ${data.lastName}`;
-        const updateRes = await update({ displayName: name });
-        // console.log(updateRes)
-        //Update res returns undefined
+        await update({ displayName: name });
         const formData = {
           displayName: result.user.displayName,
           email: result.user.email,
@@ -40,10 +38,11 @@ const StudentRegister = () => {
         };
         const dbResult = await axiosSecure.post("/user", formData);
 
-        console.log(dbResult)
-
-        navigate(location.state || "/");
-        successAlert("Registration Successful");
+        // console.log(dbResult);
+        if (dbResult.data) {
+          navigate(location.state || "/");
+          successAlert("Registration Successful");
+        }
       }
     } catch (error) {
       console.log(error);

@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -24,6 +24,7 @@ const subjectOptions = [
 const PostNewTuitionForm = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const formRef = useRef();
   const {
     register,
     handleSubmit,
@@ -40,14 +41,14 @@ const PostNewTuitionForm = () => {
     enabled: !!user?.email,
   });
 
-  const onSubmit = (data) => {
+  const handlePostTuition = (data) => {
     axiosSecure
       .post(`/tuitions?email=${user?.email}`, data)
       .then((result) => {
         if (result.data) {
           successAlert("Posted successfully");
           reset(); // Clear the form
-          document.getElementById("tuition_modal").close(); // Close modal
+          formRef.current.close(); // Close modal
         }
       })
       .catch((error) => {
@@ -59,17 +60,17 @@ const PostNewTuitionForm = () => {
   return (
     <>
       {/* --- 1. The Trigger Button --- */}
-      <div className="flex justify-center my-6">
+      <div className="flex justify-end my-6">
         <button
           className="btn btn-primary text-white"
-          onClick={() => document.getElementById("tuition_modal").showModal()}
+          onClick={() => formRef.current.showModal()}
         >
-          Create New Request
+          Post New Tuition
         </button>
       </div>
 
       {/* --- 2. The Modal Structure --- */}
-      <dialog id="tuition_modal" className="modal modal-bottom sm:modal-middle">
+      <dialog ref={formRef} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box w-11/12 max-w-4xl">
           {/* Close Button (Top Right) */}
           <form method="dialog">
@@ -79,10 +80,10 @@ const PostNewTuitionForm = () => {
           </form>
 
           <h2 className="card-title text-2xl justify-center mb-6">
-            Create Tuition Request
+            Post New Tuition
           </h2>
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={handleSubmit(handlePostTuition)} className="space-y-4">
             {/* --- Row 1: Name & Email --- */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="form-control">

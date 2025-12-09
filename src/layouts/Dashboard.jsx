@@ -2,6 +2,7 @@ import React from "react";
 import { CgProfile } from "react-icons/cg";
 import { Link, Outlet } from "react-router";
 import logo from '../assets/logo.png'
+import { FaChalkboardTeacher } from "react-icons/fa";
 
 const Dashboard = () => {
     
@@ -84,6 +85,16 @@ const Dashboard = () => {
               >
                 <CgProfile />
                 <span className="is-drawer-close:hidden">Profile</span>
+              </Link>
+            </li>
+            <li>
+              <Link
+              to='/dashboard/my-tuitions'
+                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                data-tip="My Tuition"
+              >
+                <FaChalkboardTeacher/>
+                <span className="is-drawer-close:hidden">My Tuition</span>
               </Link>
             </li>
           </ul>
