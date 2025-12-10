@@ -3,7 +3,9 @@ import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import { errorAlert, successAlert } from "../../utilities/alerts";
+import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
 
 const subjectOptions = [
   { value: "bangla", label: "Bangla" },
@@ -25,6 +27,7 @@ const PostNewTuitionForm = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const formRef = useRef();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -64,7 +67,20 @@ const PostNewTuitionForm = () => {
       <div className="flex justify-end my-6">
         <button
           className="btn btn-primary text-white"
-          onClick={() => formRef.current.showModal()}
+          onClick={
+            foundUser?.profileStatus?.isReady
+              ? () => formRef.current.showModal()
+              : () => {
+                  confirmation(
+                    "Your profile is not completed",
+                    "Complete your profile to post new tuition",
+                    "Complete Now",
+                    () => {
+                      navigate("/dashboard/profile");
+                    }
+                  );
+                }
+          }
         >
           Post New Tuition
         </button>
