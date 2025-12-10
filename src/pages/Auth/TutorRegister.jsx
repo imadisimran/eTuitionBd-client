@@ -3,6 +3,9 @@ import { useForm, useWatch } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import SubmitBtn from "./SubmitBtn";
 import { errorAlert, successAlert } from "../../utilities/alerts";
+// import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useLocation, useNavigate } from "react-router";
+import useAxiosNormal from "../../hooks/useAxiosNormal";
 
 const TutorRegister = () => {
   const {
@@ -12,6 +15,12 @@ const TutorRegister = () => {
     formState: { errors },
   } = useForm();
 
+  // const axiosSecure = useAxiosSecure();
+  //Using axios normal because it can lead to a empty accessToken
+  const axiosNormal=useAxiosNormal()
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // Watch the password field to compare with confirm password
   const passwordValue = useWatch({
     control,
@@ -19,16 +28,26 @@ const TutorRegister = () => {
     defaultValue: "",
   });
 
-  const {signUp, update } = useAuth();
+  const { signUp } = useAuth();
 
   const tutorRegister = async (data) => {
     try {
       const result = await signUp(data.email, data.password);
       if (result.user.accessToken) {
         const name = `${data.firstName} ${data.lastName}`;
-        const updateRes = await update({ displayName: name });
-        console.log(updateRes);
-        successAlert("Registration Successful");
+        const formData = {
+          displayName: name,
+          email: result.user.email,
+          institution: data.institution,
+          role: "tutor",
+        };
+        const dbResult = await axiosNormal.post("/user", formData);
+
+        // console.log(dbResult);
+        if (dbResult.data) {
+          navigate(location.state || "/");
+          successAlert("Registration Successful");
+        }
       }
     } catch (error) {
       console.log(error);
@@ -68,14 +87,21 @@ const TutorRegister = () => {
             </span>
           )}
 
-          {/* Institution - Not Required */}
+          {/* Institution */}
           <label className="label">Institution</label>
           <input
-            {...register("institution")}
+            {...register("institution", {
+              required: "Institution is mandatory for being a tutor",
+            })}
             type="text"
             className="input"
             placeholder="Institution"
           />
+          {errors.institution && (
+            <span className="text-secondary text-sm">
+              {errors.institution.message}
+            </span>
+          )}
 
           {/* Email */}
           <label className="label">Email</label>

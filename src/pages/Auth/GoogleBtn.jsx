@@ -1,12 +1,13 @@
 import React from "react";
 import useAuth from "../../hooks/useAuth";
 import { errorAlert, successAlert } from "../../utilities/alerts";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useLocation, useNavigate } from "react-router";
+import useAxiosNormal from "../../hooks/useAxiosNormal";
 
 const GoogleBtn = () => {
   const { googleLogin } = useAuth();
-  const axiosSecure = useAxiosSecure();
+  // const axiosSecure = useAxiosSecure();
+  const axiosNormal = useAxiosNormal();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -19,8 +20,7 @@ const GoogleBtn = () => {
           email: result.user.email,
           photoURL: result.user.photoURL,
         };
-
-        const { data } = await axiosSecure.post("/user", userInfo);
+        const { data } = await axiosNormal.post("/user", userInfo);
         if (data) {
           successAlert();
           navigate(location.state || "/");

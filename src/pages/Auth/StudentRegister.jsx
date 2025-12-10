@@ -4,12 +4,14 @@ import { errorAlert, successAlert } from "../../utilities/alerts";
 import useAuth from "../../hooks/useAuth";
 import SubmitBtn from "./SubmitBtn";
 import { useLocation, useNavigate } from "react-router";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
+// import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAxiosNormal from "../../hooks/useAxiosNormal";
 
 const StudentRegister = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const axiosSecure = useAxiosSecure();
+  // const axiosSecure = useAxiosSecure();
+  const axiosNormal = useAxiosNormal();
   const {
     register,
     handleSubmit,
@@ -23,20 +25,19 @@ const StudentRegister = () => {
     defaultValue: "",
   });
 
-  const { signUp, update } = useAuth();
+  const { signUp } = useAuth();
 
   const studentRegister = async (data) => {
     try {
       const result = await signUp(data.email, data.password);
       if (result.user.accessToken) {
         const name = `${data.firstName} ${data.lastName}`;
-        await update({ displayName: name });
+        // await update({ displayName: name });
         const formData = {
-          displayName: result.user.displayName,
+          displayName: name,
           email: result.user.email,
-          photoURL: result.user.photoURL,
         };
-        const dbResult = await axiosSecure.post("/user", formData);
+        const dbResult = await axiosNormal.post("/user", formData);
 
         // console.log(dbResult);
         if (dbResult.data) {

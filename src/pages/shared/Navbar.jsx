@@ -10,11 +10,11 @@ const Navbar = () => {
   const { user, logOut } = useAuth();
   const { data: dbUser } = useQuery({
     queryKey: [user?.email],
+    enabled: !!user?.email && !!user?.accessToken,
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
       return result.data;
     },
-    enabled: !!user?.email,
   });
   const links = (
     <>

@@ -1,25 +1,48 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import useAuth from "./useAuth";
+import { LogOut } from "lucide-react";
+import { auth } from "../firebase/firebase.config";
 
 const axiosSecure = axios.create({
   baseURL: "http://localhost:3000",
 });
 
 const useAxiosSecure = () => {
-  const { user } = useAuth();
+  const { user, logOut } = useAuth();
+  // console.log(user?.accessToken)
   useEffect(() => {
     const requestInterceptor = axiosSecure.interceptors.request.use(
-      (config) => {
-        config.headers.authorization = `Bearer ${user?.accessToken}`;
+      async (config) => {
+        const currentUser = auth.currentUser;
+        if (currentUser) {
+          // 2. getIdToken(true) forces a refresh, but usually empty () is fine.
+          // This ensures the token is valid right NOW.
+          const token = await currentUser.getIdToken();
+          config.headers.authorization = `Bearer ${token}`;
+        }
         return config;
+      }
+    );
+
+    const responseInterceptor = axiosSecure.interceptors.response.use(
+      (response) => {
+        return response;
+      },
+      (error) => {
+        // console.log(error);
+        if (error.status === 401 || error.status === 403) {
+          logOut();
+        }
+        return Promise.reject(error);
       }
     );
 
     return () => {
       axios.interceptors.request.eject(requestInterceptor);
+      axios.interceptors.response.eject(responseInterceptor);
     };
-  }, [user]);
+  }, [user, logOut]);
 
   return axiosSecure;
 };
