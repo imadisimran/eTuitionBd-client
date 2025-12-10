@@ -6,6 +6,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import axios from "axios";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 import CircularProgress from "./CircularProgress";
+import { X } from "lucide-react";
 
 // For understanding the code visit https://gemini.google.com/share/cbde812d745a
 
@@ -114,7 +115,7 @@ const TutorDashboardProfile = () => {
 
   // 5. Update Profile Logic
   const updateForm = (data) => {
-    console.log(data)
+    console.log(data);
     // Transform subjects back to simple array of strings for backend
     const formattedData = {
       ...data,
@@ -123,7 +124,7 @@ const TutorDashboardProfile = () => {
         subjects: data.tutorProfile.subjects.map((item) => item.value),
       },
     };
-    console.log(formattedData)
+    console.log(formattedData);
     confirmation(
       "Are you sure about updating?",
       "This information will be saved to your profile",
@@ -345,7 +346,7 @@ const TutorDashboardProfile = () => {
                       onClick={() => removeSubject(index)}
                       className="btn btn-xs btn-circle btn-error text-white"
                     >
-                      x
+                      <X />
                     </button>
                   </div>
                 ))}
@@ -393,7 +394,7 @@ const TutorDashboardProfile = () => {
                     onClick={() => removeEducation(index)}
                     className="btn btn-xs btn-circle btn-error text-white absolute -top-2 -right-2"
                   >
-                    x
+                    <X />
                   </button>
 
                   <div>

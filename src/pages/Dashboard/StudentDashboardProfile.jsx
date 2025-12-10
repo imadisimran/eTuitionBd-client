@@ -231,8 +231,8 @@ const StudentDashboardProfile = () => {
                       Class {num}
                     </option>
                   ))}
-                  <option value="hsc_1_st_year">HSC 1st Year</option>
-                  <option value="hsc_2_nd_year">HSC 2nd Year</option>
+                  <option value="hsc1">HSC 1st Year</option>
+                  <option value="hsc2">HSC 2nd Year</option>
                 </select>
               </div>
 
