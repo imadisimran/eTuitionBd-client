@@ -16,7 +16,6 @@ const useAxiosSecure = () => {
       async (config) => {
         const currentUser = auth.currentUser;
         if (currentUser) {
-          // 2. getIdToken(true) forces a refresh, but usually empty () is fine.
           // This ensures the token is valid right NOW.
           const token = await currentUser.getIdToken();
           config.headers.authorization = `Bearer ${token}`;

@@ -129,7 +129,11 @@ const Navbar = () => {
                   <div className="w-10 rounded-full">
                     <img
                       alt="Tailwind CSS Navbar component"
-                      src={dbUser?.icon || dbUser?.photoURL}
+                      src={
+                        dbUser?.icon ||
+                        dbUser?.photoURL ||
+                        "https://static.vecteezy.com/system/resources/thumbnails/005/544/718/small/profile-icon-design-free-vector.jpg"
+                      }
                     />
                   </div>
                 </div>
