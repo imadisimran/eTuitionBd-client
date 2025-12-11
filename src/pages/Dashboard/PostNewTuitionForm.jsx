@@ -35,7 +35,7 @@ const PostNewTuitionForm = () => {
   } = useForm();
 
   const { data: foundUser = {} } = useQuery({
-    queryKey: [user?.email],
+    queryKey: ["user", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
       return result.data;
