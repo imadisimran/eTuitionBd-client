@@ -13,7 +13,7 @@ const PendingTutors = () => {
   const { data: tutors = [] } = useQuery({
     queryKey: ["pending", "tutors"],
     queryFn: async () => {
-      const result = await axiosSecure.get("user/tutor?status=pending");
+      const result = await axiosSecure.get("/admin/tutor?status=pending");
       return result.data;
     },
   });
