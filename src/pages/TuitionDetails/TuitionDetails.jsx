@@ -14,7 +14,7 @@ import {
 import { formatClass, formatWith_ } from "../../utilities/textFormatter";
 import { shortDate } from "../../utilities/formatDate";
 import useRole from "../../hooks/useRole";
-import ApplyModalForm from "./ApplyModalForm";
+import ApplyModalForm from "../Home/ApplyModalForm";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import { confirmation, errorAlert } from "../../utilities/alerts";

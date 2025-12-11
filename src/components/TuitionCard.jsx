@@ -1,8 +1,8 @@
 import React from "react";
 import { MapPin, Banknote, BookOpen, GraduationCap } from "lucide-react";
-import { formatCurrency } from "../../utilities/formatCurrency";
-import { formatClass, formatWith_ } from "../../utilities/textFormatter";
-import { shortDate } from "../../utilities/formatDate";
+import { formatCurrency } from "../utilities/formatCurrency";
+import { formatClass, formatWith_ } from "../utilities/textFormatter";
+import { shortDate } from "../utilities/formatDate";
 import { Link } from "react-router";
 
 const TuitionCard = ({ tuition }) => {

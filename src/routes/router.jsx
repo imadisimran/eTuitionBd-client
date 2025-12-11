@@ -11,8 +11,9 @@ import MyTuitions from "../pages/Dashboard/MyTuitions";
 import PrivateRoute from "./PrivateRoute";
 import PendingTuitions from "../pages/Dashboard/PendingTuitions";
 import AdminRoute from "./AdminRoute";
-import TuitionDetails from "../pages/Home/TuitionDetails";
+import TuitionDetails from "../pages/TuitionDetails/TuitionDetails";
 import PendingTutors from "../pages/Dashboard/PendingTutors";
+import TutorDetails from "../pages/TutorDetails/TutorDetails";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home></Home> },
       { path: "tuition/:id", element: <TuitionDetails></TuitionDetails> },
+      { path: "tutor/:id", element: <TutorDetails></TutorDetails> },
     ],
   },
   {
