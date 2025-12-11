@@ -17,7 +17,7 @@ import useRole from "../../hooks/useRole";
 import ApplyModalForm from "./ApplyModalForm";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
-import { confirmation } from "../../utilities/alerts";
+import { confirmation, errorAlert } from "../../utilities/alerts";
 
 const TuitionDetails = () => {
   const { user } = useAuth();
@@ -79,6 +79,25 @@ const TuitionDetails = () => {
     location,
     createdAt,
   } = tuition;
+
+  const handleApplyBtn = () => {
+    if (dbUser.profileStatus.isReady) {
+      if (dbUser?.tutorProfile?.status === "approved") {
+        applyFormRef.current.showModal();
+      } else {
+        errorAlert("Your profile is not approved yet");
+      }
+    } else {
+      confirmation(
+        "Your profile is not completed",
+        "Complete your profile to apply",
+        "Complete Now",
+        () => {
+          navigate("/dashboard/profile");
+        }
+      );
+    }
+  };
 
   return (
     <>
@@ -201,20 +220,7 @@ const TuitionDetails = () => {
             <div className="card-actions justify-end mt-6">
               {role === "tutor" && (
                 <button
-                  onClick={
-                    dbUser.profileStatus.isReady
-                      ? () => applyFormRef.current.showModal()
-                      : () => {
-                          confirmation(
-                            "Your profile is not completed",
-                            "Complete your profile to apply",
-                            "Complete Now",
-                            () => {
-                              navigate("/dashboard/profile");
-                            }
-                          );
-                        }
-                  }
+                  onClick={handleApplyBtn}
                   className="btn btn-secondary btn-wide text-lg text-white"
                 >
                   Apply Now

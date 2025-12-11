@@ -12,6 +12,7 @@ import PrivateRoute from "./PrivateRoute";
 import PendingTuitions from "../pages/Dashboard/PendingTuitions";
 import AdminRoute from "./AdminRoute";
 import TuitionDetails from "../pages/Home/TuitionDetails";
+import PendingTutors from "../pages/Dashboard/PendingTutors";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,14 @@ const router = createBrowserRouter([
         element: (
           <AdminRoute>
             <PendingTuitions></PendingTuitions>
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "pending-tutors",
+        element: (
+          <AdminRoute>
+            <PendingTutors></PendingTutors>
           </AdminRoute>
         ),
       },

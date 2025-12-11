@@ -216,6 +216,9 @@ const TutorDashboardProfile = () => {
         <p className="badge badge-primary badge-outline mt-2 capitalize">
           {foundUser?.role || "Tutor"}
         </p>
+        <p className="badge badge-accent badge-outline mt-2 capitalize">
+          {foundUser?.tutorProfile.status || "Pending"}
+        </p>
 
         <div className="mt-8">
           <CircularProgress

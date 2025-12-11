@@ -3,7 +3,7 @@ import { CgProfile } from "react-icons/cg";
 import { Link, Outlet } from "react-router";
 import logo from "../assets/logo.png";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { MdOutlinePendingActions } from "react-icons/md";
+import { MdOutlinePendingActions, MdPending } from "react-icons/md";
 import useRole from "../hooks/useRole";
 
 const Dashboard = () => {
@@ -119,6 +119,18 @@ const Dashboard = () => {
                     <MdOutlinePendingActions />
                     <span className="is-drawer-close:hidden">
                       Pending Tuitions
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/dashboard/pending-tutors"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="Pending Tutors"
+                  >
+                    <MdPending />
+                    <span className="is-drawer-close:hidden">
+                      Pending Tutors
                     </span>
                   </Link>
                 </li>
