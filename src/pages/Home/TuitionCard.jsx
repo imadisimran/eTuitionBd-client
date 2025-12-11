@@ -3,6 +3,7 @@ import { MapPin, Banknote, BookOpen, GraduationCap } from "lucide-react";
 import { formatCurrency } from "../../utilities/formatCurrency";
 import { formatClass, formatWith_ } from "../../utilities/textFormatter";
 import { shortDate } from "../../utilities/formatDate";
+import { Link } from "react-router";
 
 const TuitionCard = ({ tuition }) => {
   // Destructure the data object
@@ -14,6 +15,7 @@ const TuitionCard = ({ tuition }) => {
     salaryRange,
     location,
     createdAt,
+    _id,
   } = tuition;
 
   return (
@@ -75,9 +77,12 @@ const TuitionCard = ({ tuition }) => {
 
         {/* Action Footer */}
         <div className="card-actions justify-end mt-auto">
-          <button className="btn btn-primary btn-sm btn-neo text-white font-bold w-full sm:w-auto">
+          <Link
+            to={`/tuition/${_id}`}
+            className="btn btn-primary btn-sm btn-neo text-white font-bold w-full sm:w-auto"
+          >
             View Details
-          </button>
+          </Link>
         </div>
       </div>
     </div>

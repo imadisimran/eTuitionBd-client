@@ -1,23 +1,12 @@
 export const formatClass = (text) => {
-  // Pattern: ([a-zA-Z]+) captures the WHOLE word part
-  //          (\d+)       captures the WHOLE number part
-  return text.replace(/([a-zA-Z]+)(\d+)/g, function (match, prefix, number) {
-    // Normalize to lowercase to handle HSC1, hsc1, Hsc1, etc.
-    const lowerPrefix = prefix.toLowerCase();
+  // 1. Define your special custom mappings here
+  const specialMappings = {
+    "hsc_1": "hsc 1st year",
+    "hsc_2": "hsc 2nd year"
+  };
 
-    // Special Case: HSC 1
-    if (lowerPrefix === "hsc" && number === "1") {
-      return prefix + " 1st year";
-    }
-
-    // Special Case: HSC 2
-    if (lowerPrefix === "hsc" && number === "2") {
-      return prefix + " 2nd year";
-    }
-
-    // Default: Just add a space (e.g., class1 -> class 1)
-    return prefix + " " + number;
-  });
+  // 2. Return the mapped value if it exists, otherwise replace underscores with spaces
+  return specialMappings[text] || text.replace(/_/g, " ");
 };
 
 export const formatWith_ = (sub) => {

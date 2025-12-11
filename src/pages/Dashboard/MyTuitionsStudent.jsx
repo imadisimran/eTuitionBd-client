@@ -23,7 +23,9 @@ const MyTuitionsStudent = () => {
       "Delete",
       async () => {
         try {
-          const result = await axiosSecure.delete(`/tuition/${id}`);
+          const result = await axiosSecure.delete(
+            `/tuition/${id}`
+          );
           if (result.data.deletedCount) {
             successAlert("Deleted Successfully");
             refetch();

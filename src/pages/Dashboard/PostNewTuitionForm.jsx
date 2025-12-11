@@ -1,10 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useRef } from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router";
 
 const subjectOptions = [
@@ -35,7 +34,7 @@ const PostNewTuitionForm = () => {
     formState: { errors },
   } = useForm();
 
-  const { data: foundUser = {}, refetch } = useQuery({
+  const { data: foundUser = {} } = useQuery({
     queryKey: [user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
@@ -44,21 +43,26 @@ const PostNewTuitionForm = () => {
     enabled: !!user?.email,
   });
 
+  const queryClient = useQueryClient();
+
+  const { mutate } = useMutation({
+    mutationFn: (data) => {
+      return axiosSecure.post(`/tuitions?email=${user?.email}`, data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [user?.email, "tuitions"] });
+      formRef.current.close();
+      reset();
+      successAlert("Posted successfully");
+    },
+    onError: (error) => {
+      console.log(error);
+      errorAlert();
+    },
+  });
+
   const handlePostTuition = (data) => {
-    axiosSecure
-      .post(`/tuitions?email=${user?.email}`, data)
-      .then((result) => {
-        if (result.data) {
-          formRef.current.close(); // Close modal
-          reset(); // Clear the form
-          refetch();
-          successAlert("Posted successfully");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        errorAlert("Something went wrong");
-      });
+    mutate(data);
   };
 
   return (

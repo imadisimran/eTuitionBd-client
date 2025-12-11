@@ -11,12 +11,16 @@ import MyTuitions from "../pages/Dashboard/MyTuitions";
 import PrivateRoute from "./PrivateRoute";
 import PendingTuitions from "../pages/Dashboard/PendingTuitions";
 import AdminRoute from "./AdminRoute";
+import TuitionDetails from "../pages/Home/TuitionDetails";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <RootLayout></RootLayout>,
-    children: [{ index: true, element: <Home></Home> }],
+    children: [
+      { index: true, element: <Home></Home> },
+      { path: "tuition/:id", element: <TuitionDetails></TuitionDetails> },
+    ],
   },
   {
     path: "/",
