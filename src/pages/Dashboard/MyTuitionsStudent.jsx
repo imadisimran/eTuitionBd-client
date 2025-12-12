@@ -6,12 +6,16 @@ import PostNewTuitionForm from "./PostNewTuitionForm";
 import { longDate } from "../../utilities/formatDate";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 import EditTuitionModal from "./EditTuitionModal";
+import ApplicationsModal from "./ApplicationsModal";
 
 const MyTuitionsStudent = () => {
   const [selectedTuitionId, setSelectedTuitionId] = useState("");
+  const [selectedTuitionApplication, setSelectedTuitionApplication] =
+    useState("");
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const editModalRef = useRef();
+  const applicationsModalRef = useRef();
   const { data: tuitions = [], refetch } = useQuery({
     queryKey: [user?.email, "tuitions"],
     queryFn: async () => {
@@ -42,6 +46,11 @@ const MyTuitionsStudent = () => {
   const handleEdit = (id) => {
     setSelectedTuitionId(id);
     editModalRef.current.showModal();
+  };
+
+  const handleApplications = (id) => {
+    setSelectedTuitionApplication(id);
+    applicationsModalRef.current.showModal();
   };
 
   return (
@@ -88,7 +97,10 @@ const MyTuitionsStudent = () => {
                         >
                           Delete
                         </button>
-                        <button className="btn btn-accent btn-sm">
+                        <button
+                          onClick={() => handleApplications(tuition._id)}
+                          className="btn btn-accent btn-sm"
+                        >
                           Applications
                         </button>
                       </td>
@@ -104,6 +116,10 @@ const MyTuitionsStudent = () => {
         selectedTuitionId={selectedTuitionId}
         editModalRef={editModalRef}
       ></EditTuitionModal>
+      <ApplicationsModal
+        applicationsModalRef={applicationsModalRef}
+        selectedTuitionApplication={selectedTuitionApplication}
+      ></ApplicationsModal>
     </>
   );
 };
