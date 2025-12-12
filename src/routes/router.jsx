@@ -14,6 +14,8 @@ import AdminRoute from "./AdminRoute";
 import TuitionDetails from "../pages/TuitionDetails/TuitionDetails";
 import PendingTutors from "../pages/Dashboard/PendingTutors";
 import TutorDetails from "../pages/TutorDetails/TutorDetails";
+import TutorRoute from "./TutorRoute";
+import MyApplications from "../pages/Dashboard/MyApplications";
 
 const router = createBrowserRouter([
   {
@@ -64,6 +66,14 @@ const router = createBrowserRouter([
           <AdminRoute>
             <PendingTutors></PendingTutors>
           </AdminRoute>
+        ),
+      },
+      {
+        path: "my-applications",
+        element: (
+          <TutorRoute>
+            <MyApplications></MyApplications>
+          </TutorRoute>
         ),
       },
     ],

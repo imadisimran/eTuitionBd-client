@@ -27,6 +27,7 @@ const ApplyModalForm = ({ tuitionId, tuitionTitle, applyFormRef }) => {
     const applicationData = {
       expectedSalary,
       note,
+      tuitionTitle,
     };
 
     mutate(applicationData);

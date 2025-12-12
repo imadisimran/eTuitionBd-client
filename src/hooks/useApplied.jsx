@@ -27,7 +27,7 @@ const useApplied = (tuitionId) => {
   return {
     isApplied: !!data?._id,
     isLoading: isQueryLoading || roleLoading,
-    refetchApplyStatus: refetch,
+    refetch,
   };
 };
 

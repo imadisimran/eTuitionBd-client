@@ -5,6 +5,7 @@ import logo from "../assets/logo.png";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import { MdOutlinePendingActions, MdPending } from "react-icons/md";
 import useRole from "../hooks/useRole";
+import { FaFilePen } from "react-icons/fa6";
 
 const Dashboard = () => {
   const [role] = useRole();
@@ -103,6 +104,23 @@ const Dashboard = () => {
                   >
                     <FaChalkboardTeacher />
                     <span className="is-drawer-close:hidden">My Tuition</span>
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {role === "tutor" && (
+              <>
+                <li>
+                  <Link
+                    to="/dashboard/my-applications"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="My Applications"
+                  >
+                    <FaFilePen />
+                    <span className="is-drawer-close:hidden">
+                      My Applications
+                    </span>
                   </Link>
                 </li>
               </>
