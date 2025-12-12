@@ -1,15 +1,17 @@
 import React from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { errorAlert, successAlert } from "../../utilities/alerts";
 
 const ApplyModalForm = ({ tuitionId, tuitionTitle, applyFormRef }) => {
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
   const { mutate } = useMutation({
     mutationFn: (data) => {
       return axiosSecure.post(`/application/${tuitionId}`, data);
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["applyStatus"] });
       successAlert("Applied successfully");
     },
     onError: () => {

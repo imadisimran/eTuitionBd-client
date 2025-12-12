@@ -18,12 +18,16 @@ import ApplyModalForm from "../Home/ApplyModalForm";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import { confirmation, errorAlert } from "../../utilities/alerts";
+import useApplied from "../../hooks/useApplied";
 
 const TuitionDetails = () => {
+  const { id } = useParams();
+  const applyFormRef = useRef();
   const { user } = useAuth();
   const axiosNormal = useAxiosNormal();
   const axiosSecure = useAxiosSecure();
   const [role, isRoleLoading] = useRole();
+  const { isApplied, isLoading: isApplyStatusLoading } = useApplied(id);
   const navigate = useNavigate();
   const { data: dbUser } = useQuery({
     queryKey: ["user", user?.email],
@@ -33,8 +37,6 @@ const TuitionDetails = () => {
       return result.data;
     },
   });
-  const { id } = useParams();
-  const applyFormRef = useRef();
 
   const {
     data: tuition,
@@ -49,7 +51,7 @@ const TuitionDetails = () => {
     },
   });
 
-  if (isLoading || isRoleLoading) {
+  if (isLoading || isRoleLoading || isApplyStatusLoading) {
     return (
       <div className="flex justify-center items-center h-screen">
         <span className="loading loading-spinner loading-lg text-primary"></span>
@@ -222,8 +224,9 @@ const TuitionDetails = () => {
                 <button
                   onClick={handleApplyBtn}
                   className="btn btn-secondary btn-wide text-lg text-white"
+                  disabled={isApplied}
                 >
-                  Apply Now
+                  {isApplied ? "Applied" : "Apply Now"}
                 </button>
               )}
             </div>

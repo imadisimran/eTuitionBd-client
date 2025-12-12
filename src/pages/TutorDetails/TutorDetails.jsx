@@ -36,7 +36,7 @@ const TutorDetails = () => {
   } = tutorProfile || {};
 
   return (
-    <div className="bg-base-200 min-h-screen py-10 px-4">
+    <div className="bg-base-200 rounded-3xl mt-10 min-h-screen py-10 px-4">
       <div className="max-w-6xl mx-auto">
         {/* --- Header / Hero Section --- */}
         <div className="card lg:card-side bg-base-100 shadow-xl mb-8 overflow-hidden">
