@@ -16,6 +16,7 @@ import PendingTutors from "../pages/Dashboard/PendingTutors";
 import TutorDetails from "../pages/TutorDetails/TutorDetails";
 import TutorRoute from "./TutorRoute";
 import MyApplications from "../pages/Dashboard/MyApplications";
+import PaymentSuccess from "../pages/Dashboard/PaymentSuccess";
 
 const router = createBrowserRouter([
   {
@@ -76,6 +77,14 @@ const router = createBrowserRouter([
           </TutorRoute>
         ),
       },
+      {
+        path:'payment-success',
+        element:<PaymentSuccess></PaymentSuccess>
+      },
+      {
+        path:'payment-cancel',
+        element:<PaymentSuccess></PaymentSuccess>
+      }
     ],
   },
 ]);
