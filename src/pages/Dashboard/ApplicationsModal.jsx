@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { Link } from "react-router";
@@ -18,15 +18,32 @@ const ApplicationsModal = ({
     },
     enabled: !!selectedTuitionApplication,
   });
-//   console.log(applications)
+
+  const { mutate: paymentFn } = useMutation({
+    mutationFn: (data) => {
+      return axiosSecure.post("/create-checkout-session", data);
+    },
+    onSuccess: ({ data }) => {
+      window.location.href = data.url;
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+
+  const handlePayment = (id) => {
+    const data = {
+      applicationId: id,
+    };
+    paymentFn(data);
+  };
+  //   console.log(applications)
   return (
     <div>
       <dialog ref={applicationsModalRef} className="modal">
         <div className="modal-box w-11/12 max-w-5xl">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="font-bold text-lg">
-              Applications
-            </h3>
+            <h3 className="font-bold text-lg">Applications</h3>
             <form method="dialog">
               <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
                 ✕
@@ -42,14 +59,14 @@ const ApplicationsModal = ({
                   <th>#</th>
                   <th>Name</th>
                   <th>Expected Salary & Experience</th>
-                  <th>Favorite Color</th>
+                  <th>Note from teacher</th>
                   <th></th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 {applications.map((application, index) => (
-                  <tr>
+                  <tr key={application._id}>
                     <th>{index + 1}</th>
                     <td>
                       <div className="flex items-center gap-3">
@@ -88,7 +105,12 @@ const ApplicationsModal = ({
                       </Link>
                     </th>
                     <td>
-                        <button className="btn btn-primary btn-sm">Confirm</button>
+                      <button
+                        onClick={() => handlePayment(application._id)}
+                        className="btn btn-primary btn-sm"
+                      >
+                        Confirm
+                      </button>
                     </td>
                   </tr>
                 ))}
