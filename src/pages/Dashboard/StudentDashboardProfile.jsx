@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import useAuth from "../../hooks/useAuth";
-import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useForm, useWatch } from "react-hook-form";
 import axios from "axios";
+import useAuth from "../../hooks/useAuth";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 import CircularProgress from "./CircularProgress";
 
@@ -11,12 +11,30 @@ const StudentDashboardProfile = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
 
-  // 1. Fetch User Data
-  const {
-    data: foundUser = {},
-    isLoading: isUserLoading,
-    refetch,
-  } = useQuery({
+  // --- 1. React Hook Form Setup ---
+  const { 
+    register, 
+    handleSubmit, 
+    control, 
+    setValue, 
+    reset,
+    formState: { isDirty } 
+  } = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      studentClass: "",
+      division: "",
+      district: "",
+      address: "",
+      guardianRelation: "",
+      guardianPhone: ""
+    }
+  });
+
+  // --- 2. Fetch Data ---
+  const { data: foundUser = {}, isLoading: isUserLoading, refetch } = useQuery({
     queryKey: ["user", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
@@ -25,50 +43,55 @@ const StudentDashboardProfile = () => {
     enabled: !!user?.email,
   });
 
-  // 2. Fetch Division Data
-  const { data: divisionDistrict = [], isLoading: isDivisionLoading } =
-    useQuery({
-      queryKey: ["division"],
-      queryFn: async () => {
-        const result = await axios.get("/division-district.json");
-        return result.data;
-      },
-    });
+  const { data: divisionData = [], isLoading: isDivisionLoading } = useQuery({
+    queryKey: ["division"],
+    queryFn: async () => {
+      const result = await axios.get("/division-district.json");
+      return result.data;
+    },
+  });
 
-  const { register, handleSubmit, control, setValue } = useForm();
+  // --- 3. Sync Database Data to Form ---
+  // This is the "Professional" way to handle default values from an API
+  useEffect(() => {
+    if (foundUser?.email) {
+      reset({
+        name: foundUser.displayName || "",
+        email: user?.email || "",
+        phone: foundUser.phone || "",
+        studentClass: foundUser.studentInfo?.class || "",
+        division: foundUser.studentInfo?.division || "",
+        district: foundUser.studentInfo?.district || "",
+        address: foundUser.studentInfo?.address || "",
+        guardianRelation: foundUser.studentInfo?.guardian?.relation || "",
+        guardianPhone: foundUser.studentInfo?.guardian?.phone || "",
+      });
+    }
+  }, [foundUser, user, reset]);
 
-  // 3. Watch for changes in Division
+  // --- 4. Logic for Dependent Dropdowns ---
   const selectedDivision = useWatch({ control, name: "division" });
 
-  const divisions = divisionDistrict?.map((d) => d.division);
+  // Calculate districts dynamically based on the CURRENT form value
+  const availableDistricts = useMemo(() => {
+    if (!selectedDivision) return [];
+    const found = divisionData.find((d) => d.division === selectedDivision);
+    return found?.district || [];
+  }, [selectedDivision, divisionData]);
 
-  const getDistricts = (division) => {
-    // If user hasn't selected a new division yet, use the one from the database
-    const currentDivision = division || foundUser?.studentInfo?.division;
-
-    if (!currentDivision) return [];
-
-    const choosenDivison = divisionDistrict.find(
-      (d) => d.division === currentDivision
-    );
-    return choosenDivison?.district || [];
+  // Handle Division Change cleanly
+  const handleDivisionChange = (e) => {
+    setValue("division", e.target.value); // Set the new division
+    setValue("district", ""); // Reset district because the list changed
   };
 
-  //Wait for default values to load
-  if (
-    isUserLoading ||
-    isDivisionLoading ||
-    Object.keys(foundUser).length === 0
-  ) {
-    return (
-      <div className="p-10 text-center">
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
-  }
-  // console.log('dashboard profile loaded')
-
+  // --- 5. Handlers ---
   const updateForm = (data) => {
+    // Optional: Check if form is actually dirty before sending request
+    if (!isDirty) {
+        return errorAlert("No changes made to save.");
+    }
+
     confirmation(
       "Are you sure about updating?",
       "This information will be saved to your profile",
@@ -83,7 +106,7 @@ const StudentDashboardProfile = () => {
             }
           })
           .catch((error) => {
-            console.log(error);
+            console.error(error);
             errorAlert("Something went wrong");
           });
       }
@@ -93,10 +116,7 @@ const StudentDashboardProfile = () => {
   const handleUpdateProfilePicture = async (e) => {
     e.preventDefault();
     const profilePicture = e.target.profilePic.files[0];
-
-    if (!profilePicture) {
-      return;
-    }
+    if (!profilePicture) return;
 
     const formData = new FormData();
     formData.append("image", profilePicture);
@@ -108,101 +128,96 @@ const StudentDashboardProfile = () => {
       );
 
       if (result.data.success) {
-        const data = {
+        const updateData = {
           photoURL: result.data.data.display_url,
-          icon: result.data.data.thumb?.url || result.data.data.display_url,
-          deleteURL: result.data.data.delete_url,
         };
-
-        const result2 = await axiosSecure.patch(
+        const backendResult = await axiosSecure.patch(
           `/user?email=${user?.email}`,
-          data
+          updateData
         );
 
-        if (result2.data.modifiedCount) {
+        if (backendResult.data.modifiedCount) {
           successAlert("Uploaded successfully");
           refetch();
         }
       }
     } catch (error) {
-      console.log(error);
-      errorAlert("Something went wrong");
+      console.error(error);
+      errorAlert("Image upload failed");
     }
   };
 
-  // console.log(foundUser);
+  if (isUserLoading || isDivisionLoading) {
+    return (
+      <div className="p-10 text-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex gap-10">
-      {/* Profile Image */}
-      <div>
-        <div className="w-30 h-30 border rounded-full overflow-hidden">
+    <div className="flex gap-10 flex-col md:flex-row">
+      {/* --- Left Side: Profile Image --- */}
+      <div className="flex flex-col items-center">
+        <div className="w-32 h-32 border rounded-full overflow-hidden mb-4">
           <img
             className="w-full h-full object-cover"
             src={foundUser?.photoURL}
             alt={foundUser?.displayName}
           />
         </div>
-        {/* Update Profile Image */}
-        <form onSubmit={handleUpdateProfilePicture} className="max-w-[200px]">
+        
+        <form onSubmit={handleUpdateProfilePicture} className="flex flex-col items-center gap-2 mb-6">
           <input
             name="profilePic"
             type="file"
-            className="file-input file-input-xs"
+            className="file-input file-input-bordered file-input-xs w-full max-w-xs"
           />
-          <button className="btn-secondary btn-xs btn">
-            Update Profile Picture
+          <button className="btn btn-secondary btn-xs">
+            Update Picture
           </button>
         </form>
-        <h2 className="text-2xl font-bold mt-5 mb-10 text-center">
+
+        <h2 className="text-2xl font-bold text-center">
           {foundUser?.displayName}
         </h2>
-        <CircularProgress
-          percentage={foundUser?.profileStatus?.percent}
-        ></CircularProgress>
+        <div className="mt-4">
+            <CircularProgress percentage={foundUser?.profileStatus?.percent} />
+        </div>
       </div>
 
-      {/* Form */}
+      {/* --- Right Side: Main Form --- */}
       <div className="flex-1">
-        <form
-          className="flex flex-col gap-5"
-          onSubmit={handleSubmit(updateForm)}
-        >
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit(updateForm)}>
+          
           {/* Personal Info */}
           <div className="border p-5 rounded-lg">
             <h2 className="text-xl mb-3 font-semibold">Personal Info</h2>
             <fieldset className="fieldset grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* NAME */}
               <div>
                 <label className="label">Name</label>
                 <input
-                  // {...register("name")}
-                  defaultValue={foundUser?.displayName}
+                  {...register("name")}
                   readOnly
                   type="text"
                   className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
-                  placeholder="Name"
                 />
               </div>
 
-              {/* EMAIL */}
               <div>
                 <label className="label">Email</label>
                 <input
-                  // {...register("email")}
-                  defaultValue={user?.email}
+                  {...register("email")}
                   readOnly
                   type="email"
                   className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
                 />
               </div>
 
-              {/* PHONE */}
               <div>
                 <label className="label">Phone</label>
                 <input
                   {...register("phone")}
-                  defaultValue={foundUser?.phone}
                   type="text"
                   className="input input-bordered w-full"
                   placeholder="Phone"
@@ -211,78 +226,59 @@ const StudentDashboardProfile = () => {
             </fieldset>
           </div>
 
-          {/* Location Info */}
+          {/* Academic & Location */}
           <div className="border p-5 rounded-lg">
             <h2 className="text-xl mb-3 font-semibold">Academic & Location</h2>
             <fieldset className="fieldset grid grid-cols-1 md:grid-cols-3 gap-4">
-              {/* CLASS */}
               <div>
                 <label className="label">Class</label>
                 <select
                   {...register("studentClass")}
-                  defaultValue={foundUser?.studentInfo?.class || ""}
                   className="select select-bordered w-full"
                 >
-                  <option disabled value="">
-                    Select Class
-                  </option>
+                  <option disabled value="">Select Class</option>
                   {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                    <option key={num} value={`class_${num}`}>
-                      Class {num}
-                    </option>
+                    <option key={num} value={`class_${num}`}>Class {num}</option>
                   ))}
                   <option value="hsc_1">HSC 1st Year</option>
                   <option value="hsc_2">HSC 2nd Year</option>
                 </select>
               </div>
 
-              {/* DIVISION */}
               <div>
                 <label className="label">Division</label>
                 <select
                   {...register("division")}
-                  defaultValue={foundUser?.studentInfo?.division || ""}
+                  onChange={handleDivisionChange} // Override RHF onChange manually
                   className="select select-bordered w-full"
-                  onChange={(e) => {
-                    register("division").onChange(e); // Notify RHF
-                    setValue("district", ""); // Reset district when division changes
-                  }}
                 >
-                  <option disabled value="">
-                    Select Division
-                  </option>
-                  {divisions?.map((d, i) => (
-                    <option key={i} value={d}>
-                      {d}
-                    </option>
+                  <option disabled value="">Select Division</option>
+                  {divisionData.map((d, i) => (
+                    <option key={i} value={d.division}>{d.division}</option>
                   ))}
                 </select>
               </div>
 
-              {/* DISTRICT */}
               <div>
                 <label className="label">District</label>
                 <select
                   {...register("district")}
-                  defaultValue={foundUser?.studentInfo?.district || ""}
                   className="select select-bordered w-full"
+                  disabled={!selectedDivision} // Disable if no division selected
                 >
                   <option disabled value="">
-                    Select District
+                    {selectedDivision ? "Select District" : "Select Division First"}
                   </option>
-                  {getDistricts(selectedDivision).map((d, i) => (
-                    <option key={i} value={d}>
-                      {d}
-                    </option>
+                  {availableDistricts.map((d, i) => (
+                    <option key={i} value={d}>{d}</option>
                   ))}
                 </select>
               </div>
-              {/* ADDRESS */}
+
               <div className="md:col-span-3">
                 <label className="label">Full Address</label>
                 <input
                   {...register("address")}
-                  defaultValue={foundUser?.studentInfo?.address || ""}
                   type="text"
                   className="input input-bordered w-full"
                   placeholder="House No, Road No, Area, etc."
@@ -295,31 +291,23 @@ const StudentDashboardProfile = () => {
           <div className="border p-5 rounded-lg">
             <h2 className="text-xl mb-3 font-semibold">Guardian Info</h2>
             <fieldset className="fieldset grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* RELATION */}
               <div>
                 <label className="label">Relation</label>
                 <select
                   {...register("guardianRelation")}
-                  defaultValue={
-                    foundUser?.studentInfo?.guardian?.relation || ""
-                  }
                   className="select select-bordered w-full"
                 >
-                  <option disabled value="">
-                    Select Relation
-                  </option>
+                  <option disabled value="">Select Relation</option>
                   <option value="father">Father</option>
                   <option value="mother">Mother</option>
                   <option value="others">Others</option>
                 </select>
               </div>
 
-              {/* GUARDIAN PHONE */}
               <div>
                 <label className="label">Guardian Phone</label>
                 <input
                   {...register("guardianPhone")}
-                  defaultValue={foundUser?.studentInfo?.guardian?.phone || ""}
                   type="text"
                   className="input input-bordered w-full"
                   placeholder="Guardian Phone"

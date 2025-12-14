@@ -1,10 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 import { useNavigate } from "react-router";
+import { formatClass } from "../../utilities/textFormatter";
 
 const subjectOptions = [
   { value: "bangla", label: "Bangla" },
@@ -27,10 +28,11 @@ const PostNewTuitionForm = () => {
   const axiosSecure = useAxiosSecure();
   const formRef = useRef();
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
-    reset, // Added reset to clear form on success
+    reset,
     formState: { errors },
   } = useForm();
 
@@ -42,6 +44,26 @@ const PostNewTuitionForm = () => {
     },
     enabled: !!user?.email,
   });
+
+  // --- Modification: Use useEffect to reset form with default values ---
+  useEffect(() => {
+    if (user && foundUser) {
+      reset({
+        name: user?.displayName,
+        email: user?.email,
+        studentClass: formatClass(foundUser?.studentInfo?.class),
+        title: "",
+        subject: "",
+        medium: "",
+        salaryMin: "",
+        salaryMax: "",
+        teacherGender: "",
+        mode: "",
+        daysPerWeek: "",
+        description: "",
+      });
+    }
+  }, [user, foundUser, reset]);
 
   const queryClient = useQueryClient();
 
@@ -67,7 +89,7 @@ const PostNewTuitionForm = () => {
 
   return (
     <>
-      {/* --- 1. The Trigger Button --- */}
+      {/* --- Trigger Button --- */}
       <div className="flex justify-end my-6">
         <button
           className="btn btn-primary text-white"
@@ -90,10 +112,9 @@ const PostNewTuitionForm = () => {
         </button>
       </div>
 
-      {/* --- 2. The Modal Structure --- */}
+      {/* --- Modal --- */}
       <dialog ref={formRef} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box w-11/12 max-w-4xl">
-          {/* Close Button (Top Right) */}
           <form method="dialog">
             <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">
               ✕
@@ -116,10 +137,9 @@ const PostNewTuitionForm = () => {
                 </label>
                 <input
                   type="text"
-                  placeholder="Name"
                   className="input input-bordered w-full"
                   readOnly
-                  defaultValue={user?.displayName}
+                  {...register("name")}
                 />
               </div>
 
@@ -129,9 +149,9 @@ const PostNewTuitionForm = () => {
                 </label>
                 <input
                   type="email"
-                  defaultValue={user?.email}
                   readOnly
                   className="input input-bordered w-full bg-base-200"
+                  {...register("email")}
                 />
               </div>
             </div>
@@ -146,10 +166,10 @@ const PostNewTuitionForm = () => {
                   type="text"
                   placeholder="Need Math Tutor"
                   className="input input-bordered w-full"
-                  {...register("title", { required: true })}
+                  {...register("title", { required: "Title is required" })}
                 />
                 {errors.title && (
-                  <span className="text-error text-xs">Title is required</span>
+                  <ErrorMessage message={errors.title.message} />
                 )}
               </div>
 
@@ -159,8 +179,9 @@ const PostNewTuitionForm = () => {
                 </label>
                 <select
                   className="select select-bordered w-full"
-                  defaultValue=""
-                  {...register("subject", { required: true })}
+                  {...register("subject", {
+                    required: "Please select a subject",
+                  })}
                 >
                   <option value="" disabled>
                     Select Subject
@@ -171,6 +192,9 @@ const PostNewTuitionForm = () => {
                     </option>
                   ))}
                 </select>
+                {errors.subject && (
+                  <ErrorMessage message={errors.subject.message} />
+                )}
               </div>
             </div>
 
@@ -180,16 +204,12 @@ const PostNewTuitionForm = () => {
                 <label className="label">
                   <span className="label-text">Class</span>
                 </label>
-
                 <input
                   type="text"
                   readOnly
                   placeholder="Class"
                   className="input input-bordered w-full capitalize"
-                  defaultValue={foundUser?.studentInfo?.class?.replaceAll(
-                    "_",
-                    " "
-                  )}
+                  {...register("studentClass")}
                 />
               </div>
 
@@ -199,8 +219,7 @@ const PostNewTuitionForm = () => {
                 </label>
                 <select
                   className="select select-bordered w-full"
-                  defaultValue=""
-                  {...register("medium", { required: true })}
+                  {...register("medium", { required: "Medium is required" })}
                 >
                   <option value="" disabled>
                     Select Medium
@@ -210,7 +229,7 @@ const PostNewTuitionForm = () => {
                   <option value="english_medium">English Medium</option>
                 </select>
                 {errors.medium && (
-                  <span className="text-error text-xs">Medium is required</span>
+                  <ErrorMessage message={errors.medium.message} />
                 )}
               </div>
             </div>
@@ -221,19 +240,34 @@ const PostNewTuitionForm = () => {
                 <span className="label-text">Salary Range (BDT)</span>
               </label>
               <div className="flex gap-4 items-center">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  className="input input-bordered w-full"
-                  {...register("salaryMin", { required: true, min: 500 })}
-                />
+                <div className="w-full">
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    className="input input-bordered w-full"
+                    {...register("salaryMin", {
+                      required: "Min salary is required",
+                      min: { value: 500, message: "Minimum 500 BDT" },
+                    })}
+                  />
+                  {errors.salaryMin && (
+                    <ErrorMessage message={errors.salaryMin.message} />
+                  )}
+                </div>
                 <span className="text-xl font-bold">-</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  className="input input-bordered w-full"
-                  {...register("salaryMax", { required: true })}
-                />
+                <div className="w-full">
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    className="input input-bordered w-full"
+                    {...register("salaryMax", {
+                      required: "Max salary is required",
+                    })}
+                  />
+                  {errors.salaryMax && (
+                    <ErrorMessage message={errors.salaryMax.message} />
+                  )}
+                </div>
               </div>
             </div>
 
@@ -245,34 +279,23 @@ const PostNewTuitionForm = () => {
                   <span className="label-text">Preferred Teacher Gender</span>
                 </label>
                 <div className="flex gap-4">
-                  <label className="label cursor-pointer gap-2">
-                    <span className="label-text">Male</span>
-                    <input
-                      type="radio"
-                      value="Male"
-                      className="radio radio-primary"
-                      {...register("teacherGender", { required: true })}
-                    />
-                  </label>
-                  <label className="label cursor-pointer gap-2">
-                    <span className="label-text">Female</span>
-                    <input
-                      type="radio"
-                      value="Female"
-                      className="radio radio-primary"
-                      {...register("teacherGender", { required: true })}
-                    />
-                  </label>
-                  <label className="label cursor-pointer gap-2">
-                    <span className="label-text">Any</span>
-                    <input
-                      type="radio"
-                      value="Any"
-                      className="radio radio-primary"
-                      {...register("teacherGender", { required: true })}
-                    />
-                  </label>
+                  {["Male", "Female", "Any"].map((gender) => (
+                    <label key={gender} className="label cursor-pointer gap-2">
+                      <span className="label-text">{gender}</span>
+                      <input
+                        type="radio"
+                        value={gender}
+                        className="radio radio-primary"
+                        {...register("teacherGender", {
+                          required: "Please select a gender preference",
+                        })}
+                      />
+                    </label>
+                  ))}
                 </div>
+                {errors.teacherGender && (
+                  <ErrorMessage message={errors.teacherGender.message} />
+                )}
               </div>
 
               {/* Mode */}
@@ -281,25 +304,24 @@ const PostNewTuitionForm = () => {
                   <span className="label-text">Tuition Mode</span>
                 </label>
                 <div className="flex gap-4">
-                  <label className="label cursor-pointer gap-2">
-                    <span className="label-text">Offline</span>
-                    <input
-                      type="radio"
-                      value="Offline"
-                      className="radio radio-secondary"
-                      {...register("mode", { required: true })}
-                    />
-                  </label>
-                  <label className="label cursor-pointer gap-2">
-                    <span className="label-text">Online</span>
-                    <input
-                      type="radio"
-                      value="Online"
-                      className="radio radio-secondary"
-                      {...register("mode", { required: true })}
-                    />
-                  </label>
+                  {["Offline", "Online"].map((modeItem) => (
+                    <label
+                      key={modeItem}
+                      className="label cursor-pointer gap-2"
+                    >
+                      <span className="label-text">{modeItem}</span>
+                      <input
+                        type="radio"
+                        value={modeItem}
+                        className="radio radio-secondary"
+                        {...register("mode", {
+                          required: "Please select a tuition mode",
+                        })}
+                      />
+                    </label>
+                  ))}
                 </div>
+                {errors.mode && <ErrorMessage message={errors.mode.message} />}
               </div>
             </div>
 
@@ -321,11 +343,16 @@ const PostNewTuitionForm = () => {
                       type="radio"
                       value={day}
                       className="hidden"
-                      {...register("daysPerWeek", { required: true })}
+                      {...register("daysPerWeek", {
+                        required: "Select days/week",
+                      })}
                     />
                   </label>
                 ))}
               </div>
+              {errors.daysPerWeek && (
+                <ErrorMessage message={errors.daysPerWeek.message} />
+              )}
             </div>
 
             {/* --- Row 7: Description --- */}
@@ -336,8 +363,13 @@ const PostNewTuitionForm = () => {
               <textarea
                 className="textarea textarea-bordered h-24"
                 placeholder="Details about the student..."
-                {...register("description", { required: true })}
+                {...register("description", {
+                  required: "Description is required",
+                })}
               ></textarea>
+              {errors.description && (
+                <ErrorMessage message={errors.description.message} />
+              )}
             </div>
 
             {/* Submit Button */}
@@ -354,3 +386,8 @@ const PostNewTuitionForm = () => {
 };
 
 export default PostNewTuitionForm;
+
+// Helper for error messages
+const ErrorMessage = ({ message }) => (
+  <span className="text-error text-xs mt-1 block">{message}</span>
+);

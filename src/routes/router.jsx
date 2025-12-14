@@ -19,6 +19,7 @@ import MyApplications from "../pages/Dashboard/MyApplications";
 import PaymentSuccess from "../pages/Dashboard/PaymentSuccess";
 import MyPosts from "../pages/Dashboard/MyPosts";
 import PaymentHistory from "../pages/Dashboard/PaymentHistory";
+import AllTuitions from "../pages/AllTuitions/AllTuitions";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home></Home> },
       { path: "tuition/:id", element: <TuitionDetails></TuitionDetails> },
       { path: "tutor/:id", element: <TutorDetails></TutorDetails> },
+      { path: "all-tuitions", element: <AllTuitions></AllTuitions> },
     ],
   },
   {
@@ -80,21 +82,21 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path:'payment-success',
-        element:<PaymentSuccess></PaymentSuccess>
+        path: "payment-success",
+        element: <PaymentSuccess></PaymentSuccess>,
       },
       {
-        path:'payment-cancel',
-        element:<PaymentSuccess></PaymentSuccess>
+        path: "payment-cancel",
+        element: <PaymentSuccess></PaymentSuccess>,
       },
       {
-        path:'my-posts',
-        element:<MyPosts></MyPosts>
+        path: "my-posts",
+        element: <MyPosts></MyPosts>,
       },
       {
-        path:"payment-history",
-        element:<PaymentHistory></PaymentHistory>
-      }
+        path: "payment-history",
+        element: <PaymentHistory></PaymentHistory>,
+      },
     ],
   },
 ]);
