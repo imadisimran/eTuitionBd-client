@@ -3,7 +3,12 @@ import { CgProfile } from "react-icons/cg";
 import { Link, Outlet } from "react-router";
 import logo from "../assets/logo.png";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { MdOutlinePendingActions, MdPending, MdPostAdd } from "react-icons/md";
+import {
+  MdOutlinePendingActions,
+  MdPayments,
+  MdPending,
+  MdPostAdd,
+} from "react-icons/md";
 import useRole from "../hooks/useRole";
 import { FaFilePen } from "react-icons/fa6";
 
@@ -108,21 +113,6 @@ const Dashboard = () => {
               </li>
             )}
 
-            {(role === "student" || role === "tutor") && (
-              <>
-                <li>
-                  <Link
-                    to="/dashboard/my-tuitions"
-                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                    data-tip="My Tuition"
-                  >
-                    <FaChalkboardTeacher />
-                    <span className="is-drawer-close:hidden">My Tuition</span>
-                  </Link>
-                </li>
-              </>
-            )}
-
             {role === "tutor" && (
               <>
                 <li>
@@ -135,6 +125,31 @@ const Dashboard = () => {
                     <span className="is-drawer-close:hidden">
                       My Applications
                     </span>
+                  </Link>
+                </li>
+              </>
+            )}
+
+            {(role === "student" || role === "tutor") && (
+              <>
+                <li>
+                  <Link
+                    to="/dashboard/my-tuitions"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="My Tuition"
+                  >
+                    <FaChalkboardTeacher />
+                    <span className="is-drawer-close:hidden">My Tuition</span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/dashboard/payment-history"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="My Payments"
+                  >
+                    <MdPayments />
+                    <span className="is-drawer-close:hidden">My Payments</span>
                   </Link>
                 </li>
               </>

@@ -18,6 +18,7 @@ import TutorRoute from "./TutorRoute";
 import MyApplications from "../pages/Dashboard/MyApplications";
 import PaymentSuccess from "../pages/Dashboard/PaymentSuccess";
 import MyPosts from "../pages/Dashboard/MyPosts";
+import PaymentHistory from "../pages/Dashboard/PaymentHistory";
 
 const router = createBrowserRouter([
   {
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
       {
         path:'my-posts',
         element:<MyPosts></MyPosts>
+      },
+      {
+        path:"payment-history",
+        element:<PaymentHistory></PaymentHistory>
       }
     ],
   },
