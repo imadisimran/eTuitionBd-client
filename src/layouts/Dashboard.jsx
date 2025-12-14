@@ -3,7 +3,7 @@ import { CgProfile } from "react-icons/cg";
 import { Link, Outlet } from "react-router";
 import logo from "../assets/logo.png";
 import { FaChalkboardTeacher } from "react-icons/fa";
-import { MdOutlinePendingActions, MdPending } from "react-icons/md";
+import { MdOutlinePendingActions, MdPending, MdPostAdd } from "react-icons/md";
 import useRole from "../hooks/useRole";
 import { FaFilePen } from "react-icons/fa6";
 
@@ -95,6 +95,20 @@ const Dashboard = () => {
             </li>
 
             {role === "student" && (
+              <li>
+                <Link
+                  to="/dashboard/my-posts"
+                  className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                  data-tip="My Posts"
+                >
+                  <MdPostAdd />
+
+                  <span className="is-drawer-close:hidden">My Posts</span>
+                </Link>
+              </li>
+            )}
+
+            {(role === "student" || role === "tutor") && (
               <>
                 <li>
                   <Link

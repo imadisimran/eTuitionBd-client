@@ -17,6 +17,7 @@ import TutorDetails from "../pages/TutorDetails/TutorDetails";
 import TutorRoute from "./TutorRoute";
 import MyApplications from "../pages/Dashboard/MyApplications";
 import PaymentSuccess from "../pages/Dashboard/PaymentSuccess";
+import MyPosts from "../pages/Dashboard/MyPosts";
 
 const router = createBrowserRouter([
   {
@@ -84,6 +85,10 @@ const router = createBrowserRouter([
       {
         path:'payment-cancel',
         element:<PaymentSuccess></PaymentSuccess>
+      },
+      {
+        path:'my-posts',
+        element:<MyPosts></MyPosts>
       }
     ],
   },
