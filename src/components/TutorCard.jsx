@@ -16,7 +16,7 @@ const TutorCard = ({ tutor }) => {
             <img
               src={
                 photoURL ||
-                "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                "https://www.shutterstock.com/image-vector/vector-flat-illustration-grayscale-avatar-600nw-2264922221.jpg"
               }
               alt={displayName}
               className="object-cover"

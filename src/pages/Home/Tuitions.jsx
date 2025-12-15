@@ -14,13 +14,15 @@ import { Pagination, Autoplay } from "swiper/modules";
 
 const Tuitions = () => {
   const axiosNormal = useAxiosNormal();
-  const { data: tuitions = [] } = useQuery({
+  const { data: { tuitions = [] } = {} } = useQuery({
     queryKey: ["tuitions"],
     queryFn: async () => {
       const result = await axiosNormal.get("/tuitions?status=approved");
       return result.data;
     },
   });
+
+  // console.log(tuitions);
 
   return (
     <section className="py-10 px-5 max-w-7xl mx-auto">
