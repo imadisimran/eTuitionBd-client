@@ -70,31 +70,38 @@ const MyApplications = () => {
             </thead>
             <tbody>
               {applications.map((application, index) => (
-                <tr key={index}>
+                <tr
+                  className={
+                    application.status === "rejected" ? "bg-red-100" : ""
+                  }
+                  key={index}
+                >
                   <th>{index + 1}</th>
                   <td>{application?.tuitionTitle}</td>
                   <td>{application?.expectedSalary}</td>
                   <td>{application?.note}</td>
-                  <td className="space-x-5">
-                    <button
-                      className="btn btn-sm btn-primary"
-                      onClick={() => handleEdit(application._id)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDelete(application._id)}
-                      className="btn btn-sm btn-secondary"
-                    >
-                      Delete
-                    </button>
-                    <Link
-                      to={`/tuition/${application.tuitionId}`}
-                      className="btn btn-sm btn-accent"
-                    >
-                      View Details
-                    </Link>
-                  </td>
+                  {application.status === "pending" && (
+                    <td className="space-x-5">
+                      <button
+                        className="btn btn-sm btn-primary"
+                        onClick={() => handleEdit(application._id)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(application._id)}
+                        className="btn btn-sm btn-secondary"
+                      >
+                        Delete
+                      </button>
+                      <Link
+                        to={`/tuition/${application.tuitionId}`}
+                        className="btn btn-sm btn-accent"
+                      >
+                        View Details
+                      </Link>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

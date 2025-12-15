@@ -20,6 +20,7 @@ import PaymentSuccess from "../pages/Dashboard/PaymentSuccess";
 import MyPosts from "../pages/Dashboard/MyPosts";
 import PaymentHistory from "../pages/Dashboard/PaymentHistory";
 import AllTuitions from "../pages/AllTuitions/AllTuitions";
+import UserManagement from "../pages/Dashboard/UserManagement";
 
 const router = createBrowserRouter([
   {
@@ -96,6 +97,14 @@ const router = createBrowserRouter([
       {
         path: "payment-history",
         element: <PaymentHistory></PaymentHistory>,
+      },
+      {
+        path: "user-management",
+        element: (
+          <AdminRoute>
+            <UserManagement></UserManagement>
+          </AdminRoute>
+        ),
       },
     ],
   },

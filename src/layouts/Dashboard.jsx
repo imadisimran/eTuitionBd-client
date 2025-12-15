@@ -10,7 +10,7 @@ import {
   MdPostAdd,
 } from "react-icons/md";
 import useRole from "../hooks/useRole";
-import { FaFilePen } from "react-icons/fa6";
+import { FaFilePen, FaUsersLine } from "react-icons/fa6";
 
 const Dashboard = () => {
   const [role] = useRole();
@@ -178,6 +178,18 @@ const Dashboard = () => {
                     <MdPending />
                     <span className="is-drawer-close:hidden">
                       Pending Tutors
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/dashboard/user-management"
+                    className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                    data-tip="User Management"
+                  >
+                    <FaUsersLine />
+                    <span className="is-drawer-close:hidden">
+                      User Management
                     </span>
                   </Link>
                 </li>
