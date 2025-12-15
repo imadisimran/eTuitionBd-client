@@ -1,7 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import UserDetailsModal from "./UserDetailsModal";
+import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 
 const UserManagement = () => {
   const axiosSecure = useAxiosSecure();
@@ -14,6 +15,32 @@ const UserManagement = () => {
     },
   });
 
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteFn } = useMutation({
+    mutationFn: (email) => {
+      return axiosSecure.delete(`/delete-user?email=${email}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      successAlert("Deleted Successfully");
+    },
+    onError: () => {
+      errorAlert();
+    },
+  });
+
+  const handleDelete = (email) => {
+    confirmation(
+      "Do you really want to delete the user?",
+      "You won't be able to revert it",
+      "Yes Delete",
+      () => {
+        deleteFn(email);
+      }
+    );
+  };
+
   return (
     <div>
       <div className="overflow-x-auto">
@@ -23,9 +50,10 @@ const UserManagement = () => {
             <tr>
               <th>#</th>
               <th>Name</th>
-              <th>Job</th>
-              <th>Favorite Color</th>
-              <th></th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Details</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -73,6 +101,14 @@ const UserManagement = () => {
                     Details
                   </button>
                 </th>
+                <td>
+                  <button
+                    onClick={() => handleDelete(user.email)}
+                    className="btn btn-xs btn-secondary"
+                  >
+                    Delete
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>
