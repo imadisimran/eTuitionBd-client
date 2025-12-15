@@ -29,6 +29,18 @@ const UserManagement = () => {
       errorAlert();
     },
   });
+  const { mutate: roleUpdateFn } = useMutation({
+    mutationFn: ({ email, role }) => {
+      return axiosSecure.patch(`/user/role?email=${email}`, { role: role });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      successAlert("Deleted Successfully");
+    },
+    onError: () => {
+      errorAlert();
+    },
+  });
 
   const handleDelete = (email) => {
     confirmation(
@@ -37,6 +49,19 @@ const UserManagement = () => {
       "Yes Delete",
       () => {
         deleteFn(email);
+      }
+    );
+  };
+
+  const handleRoleChange = (role, email) => {
+    confirmation(
+      `Do you really want to change his role to ${role.toUpperCase()}`,
+      `${email} he is going to be ${
+        role === "admin" ? "an" : "a"
+      } ${role.toUpperCase()}`,
+      `Yes Make ${role.toUpperCase()}`,
+      () => {
+        roleUpdateFn({ role, email });
       }
     );
   };
@@ -101,13 +126,23 @@ const UserManagement = () => {
                     Details
                   </button>
                 </th>
-                <td>
+                <td className="space-x-5">
                   <button
                     onClick={() => handleDelete(user.email)}
                     className="btn btn-xs btn-secondary"
                   >
                     Delete
                   </button>
+                  <select
+                    className="select select-xs max-w-20"
+                    onChange={(e) =>
+                      handleRoleChange(e.target.value, user.email)
+                    }
+                  >
+                    <option value="student">Student</option>
+                    <option value="tutor">Tutor</option>
+                    <option value="admin">Admin</option>
+                  </select>
                 </td>
               </tr>
             ))}
