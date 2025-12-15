@@ -217,7 +217,7 @@ const TutorDashboardProfile = () => {
           {foundUser?.role || "Tutor"}
         </p>
         <p className="badge badge-accent badge-outline mt-2 capitalize">
-          {foundUser?.tutorProfile.status || "Pending"}
+          {foundUser?.tutorProfile?.status || "Pending"}
         </p>
 
         <div className="mt-8">

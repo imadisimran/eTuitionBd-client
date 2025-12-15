@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm, useWatch } from "react-hook-form";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
@@ -12,13 +12,13 @@ const StudentDashboardProfile = () => {
   const axiosSecure = useAxiosSecure();
 
   // --- 1. React Hook Form Setup ---
-  const { 
-    register, 
-    handleSubmit, 
-    control, 
-    setValue, 
+  const {
+    register,
+    handleSubmit,
+    control,
+    setValue,
     reset,
-    formState: { isDirty } 
+    formState: { isDirty },
   } = useForm({
     defaultValues: {
       name: "",
@@ -29,12 +29,16 @@ const StudentDashboardProfile = () => {
       district: "",
       address: "",
       guardianRelation: "",
-      guardianPhone: ""
-    }
+      guardianPhone: "",
+    },
   });
 
   // --- 2. Fetch Data ---
-  const { data: foundUser = {}, isLoading: isUserLoading, refetch } = useQuery({
+  const {
+    data: foundUser = {},
+    isLoading: isUserLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["user", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
@@ -48,6 +52,21 @@ const StudentDashboardProfile = () => {
     queryFn: async () => {
       const result = await axios.get("/division-district.json");
       return result.data;
+    },
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate: tutorFn } = useMutation({
+    mutationFn: () => {
+      return axiosSecure.patch(`user-tutor?email=${user.email}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user"] });
+      successAlert("Your role has changed as a tutor");
+    },
+    onError: () => {
+      errorAlert();
     },
   });
 
@@ -89,7 +108,7 @@ const StudentDashboardProfile = () => {
   const updateForm = (data) => {
     // Optional: Check if form is actually dirty before sending request
     if (!isDirty) {
-        return errorAlert("No changes made to save.");
+      return errorAlert("No changes made to save.");
     }
 
     confirmation(
@@ -147,6 +166,17 @@ const StudentDashboardProfile = () => {
     }
   };
 
+  const handleBecomingTutor = () => {
+    confirmation(
+      "Do you really want to be a tutor",
+      "You won't be able to use this account as a student anymore",
+      "I want to be a tutor",
+      () => {
+        tutorFn();
+      }
+    );
+  };
+
   if (isUserLoading || isDivisionLoading) {
     return (
       <div className="p-10 text-center">
@@ -166,30 +196,40 @@ const StudentDashboardProfile = () => {
             alt={foundUser?.displayName}
           />
         </div>
-        
-        <form onSubmit={handleUpdateProfilePicture} className="flex flex-col items-center gap-2 mb-6">
+
+        <form
+          onSubmit={handleUpdateProfilePicture}
+          className="flex flex-col items-center gap-2 mb-6"
+        >
           <input
             name="profilePic"
             type="file"
             className="file-input file-input-bordered file-input-xs w-full max-w-xs"
           />
-          <button className="btn btn-secondary btn-xs">
-            Update Picture
-          </button>
+          <button className="btn btn-secondary btn-xs">Update Picture</button>
         </form>
 
         <h2 className="text-2xl font-bold text-center">
           {foundUser?.displayName}
         </h2>
         <div className="mt-4">
-            <CircularProgress percentage={foundUser?.profileStatus?.percent} />
+          <CircularProgress percentage={foundUser?.profileStatus?.percent} />
         </div>
+
+        <button
+          className="btn btn-secondary mt-10"
+          onClick={handleBecomingTutor}
+        >
+          Become a tutor
+        </button>
       </div>
 
       {/* --- Right Side: Main Form --- */}
       <div className="flex-1">
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit(updateForm)}>
-          
+        <form
+          className="flex flex-col gap-5"
+          onSubmit={handleSubmit(updateForm)}
+        >
           {/* Personal Info */}
           <div className="border p-5 rounded-lg">
             <h2 className="text-xl mb-3 font-semibold">Personal Info</h2>
@@ -236,9 +276,13 @@ const StudentDashboardProfile = () => {
                   {...register("studentClass")}
                   className="select select-bordered w-full"
                 >
-                  <option disabled value="">Select Class</option>
+                  <option disabled value="">
+                    Select Class
+                  </option>
                   {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                    <option key={num} value={`class_${num}`}>Class {num}</option>
+                    <option key={num} value={`class_${num}`}>
+                      Class {num}
+                    </option>
                   ))}
                   <option value="hsc_1">HSC 1st Year</option>
                   <option value="hsc_2">HSC 2nd Year</option>
@@ -252,9 +296,13 @@ const StudentDashboardProfile = () => {
                   onChange={handleDivisionChange} // Override RHF onChange manually
                   className="select select-bordered w-full"
                 >
-                  <option disabled value="">Select Division</option>
+                  <option disabled value="">
+                    Select Division
+                  </option>
                   {divisionData.map((d, i) => (
-                    <option key={i} value={d.division}>{d.division}</option>
+                    <option key={i} value={d.division}>
+                      {d.division}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -267,10 +315,14 @@ const StudentDashboardProfile = () => {
                   disabled={!selectedDivision} // Disable if no division selected
                 >
                   <option disabled value="">
-                    {selectedDivision ? "Select District" : "Select Division First"}
+                    {selectedDivision
+                      ? "Select District"
+                      : "Select Division First"}
                   </option>
                   {availableDistricts.map((d, i) => (
-                    <option key={i} value={d}>{d}</option>
+                    <option key={i} value={d}>
+                      {d}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -297,7 +349,9 @@ const StudentDashboardProfile = () => {
                   {...register("guardianRelation")}
                   className="select select-bordered w-full"
                 >
-                  <option disabled value="">Select Relation</option>
+                  <option disabled value="">
+                    Select Relation
+                  </option>
                   <option value="father">Father</option>
                   <option value="mother">Mother</option>
                   <option value="others">Others</option>

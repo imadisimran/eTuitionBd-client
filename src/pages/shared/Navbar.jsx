@@ -117,13 +117,13 @@ const Navbar = () => {
               </div>
             </div>
           ) : (
-            <>
-              <Link className="btn btn-primary" to="/login">
-                Login
-              </Link>
-              <Link className="btn btn-secondary">Post Tuition</Link>
-            </>
+            <Link className="btn btn-primary" to="/login">
+              Login
+            </Link>
           )}
+          <Link to="/dashboard/my-posts" className="btn btn-secondary">
+            Post Tuition
+          </Link>
         </div>
       </div>
     </header>
