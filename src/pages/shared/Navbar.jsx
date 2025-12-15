@@ -5,10 +5,11 @@ import useAuth from "../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { errorAlert, successAlert } from "../../utilities/alerts";
+import SandClock from "../../components/SandClock";
 const Navbar = () => {
   const axiosSecure = useAxiosSecure();
-  const { user, logOut } = useAuth();
-  const { data: dbUser } = useQuery({
+  const { user, logOut, loading } = useAuth();
+  const { data: dbUser, isLoading: dbUserLoading } = useQuery({
     queryKey: ["user", user?.email],
     enabled: !!user?.email && !!user?.accessToken,
     queryFn: async () => {
@@ -78,7 +79,9 @@ const Navbar = () => {
           <ul className="menu menu-horizontal px-1">{links}</ul>
         </div>
         <div className="navbar-end gap-5">
-          {user ? (
+          {dbUserLoading || loading ? (
+            <SandClock size="50px"></SandClock>
+          ) : user ? (
             <div className="flex-none">
               <div className="dropdown dropdown-end"></div>
               <div className="dropdown dropdown-end">

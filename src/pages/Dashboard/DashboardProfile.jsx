@@ -3,12 +3,17 @@ import useRole from "../../hooks/useRole";
 import StudentDashboardProfile from "./StudentDashboardProfile";
 import AdminDashboardProfile from "./AdminDashboardProfile";
 import TutorDashboardProfile from "./TutorDashboardProfile";
+import SandClock from "../../components/SandClock";
 
 const DashboardProfile = () => {
   const [role, roleLoading] = useRole();
 
   if (roleLoading) {
-    return <span className="loading loading-spinner loading-xl"></span>;
+    return (
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80.36px)]">
+        <SandClock></SandClock>
+      </div>
+    );
   }
 
   if (role === "student") {

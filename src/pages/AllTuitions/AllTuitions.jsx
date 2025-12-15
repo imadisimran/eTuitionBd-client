@@ -4,6 +4,8 @@ import useAxiosNormal from "../../hooks/useAxiosNormal";
 import TuitionCard from "../../components/TuitionCard";
 import { useForm, useWatch } from "react-hook-form";
 import axios from "axios";
+import SmallLoader from "../../components/SmallLoader";
+import SandClock from "../../components/SandClock";
 
 const subjectOptions = [
   { value: "bangla", label: "Bangla" },
@@ -100,8 +102,8 @@ const AllTuitions = () => {
 
   if (isDivisionLoading || isLoading) {
     return (
-      <div className="p-10 text-center">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80.36px)]">
+        <SandClock size="250px"></SandClock>
       </div>
     );
   }

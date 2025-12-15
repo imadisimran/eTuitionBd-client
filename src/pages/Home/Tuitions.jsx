@@ -12,10 +12,11 @@ import "swiper/css/navigation";
 // 1. Import Autoplay module
 import { Pagination, Autoplay } from "swiper/modules";
 import { Link } from "react-router";
+import SandClock from "../../components/SandClock";
 
 const Tuitions = () => {
   const axiosNormal = useAxiosNormal();
-  const { data: { tuitions = [] } = {} } = useQuery({
+  const { data: { tuitions = [] } = {}, isLoading } = useQuery({
     queryKey: ["tuitions"],
     queryFn: async () => {
       const result = await axiosNormal.get("/tuitions?status=approved");
@@ -23,7 +24,13 @@ const Tuitions = () => {
     },
   });
 
-  // console.log(tuitions);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center">
+        <SandClock></SandClock>
+      </div>
+    );
+  }
 
   return (
     <section className="py-10 px-5 max-w-7xl mx-auto">
@@ -32,7 +39,9 @@ const Tuitions = () => {
       </h2>
 
       <div className="w-fit ml-auto mb-5">
-        <Link to='/all-tuitions' className="btn btn-primary">View All</Link>
+        <Link to="/all-tuitions" className="btn btn-primary">
+          View All
+        </Link>
       </div>
 
       <Swiper
