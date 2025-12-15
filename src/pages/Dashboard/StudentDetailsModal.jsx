@@ -27,7 +27,6 @@ const StudentDetailsModal = ({ email, onClose }) => {
 
   return (
     <div>
-      {/* Modal - Controlled via Ref */}
       <dialog ref={modalRef} className="modal modal-bottom sm:modal-middle">
         <div className="modal-box bg-base-100 min-h-[300px]">
           {isLoading ? (
