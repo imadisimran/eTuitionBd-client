@@ -11,6 +11,7 @@ import "swiper/css/navigation";
 
 // 1. Import Autoplay module
 import { Pagination, Autoplay } from "swiper/modules";
+import { Link } from "react-router";
 
 const Tuitions = () => {
   const axiosNormal = useAxiosNormal();
@@ -26,6 +27,14 @@ const Tuitions = () => {
 
   return (
     <section className="py-10 px-5 max-w-7xl mx-auto">
+      <h2 className="text-4xl text-primary font-bold text-center mb-10">
+        Available Tuitions
+      </h2>
+
+      <div className="w-fit ml-auto mb-5">
+        <Link to='/all-tuitions' className="btn btn-primary">View All</Link>
+      </div>
+
       <Swiper
         // 2. Enable Infinite Loop
         loop={true}

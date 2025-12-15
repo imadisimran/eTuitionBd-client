@@ -21,6 +21,7 @@ import MyPosts from "../pages/Dashboard/MyPosts";
 import PaymentHistory from "../pages/Dashboard/PaymentHistory";
 import AllTuitions from "../pages/AllTuitions/AllTuitions";
 import UserManagement from "../pages/Dashboard/UserManagement";
+import AllTutors from "../pages/AllTutors/AllTutors";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
       { path: "tuition/:id", element: <TuitionDetails></TuitionDetails> },
       { path: "tutor/:id", element: <TutorDetails></TutorDetails> },
       { path: "all-tuitions", element: <AllTuitions></AllTuitions> },
+      { path: "all-tutors", element: <AllTutors></AllTutors> },
     ],
   },
   {
