@@ -19,6 +19,7 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
 import { confirmation, errorAlert } from "../../utilities/alerts";
 import useApplied from "../../hooks/useApplied";
+import SandClock from "../../components/SandClock";
 
 const TuitionDetails = () => {
   const { id } = useParams();
@@ -53,8 +54,8 @@ const TuitionDetails = () => {
 
   if (isLoading || isRoleLoading || isApplyStatusLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <span className="loading loading-spinner loading-lg text-primary"></span>
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+        <SandClock size="200px"></SandClock>
       </div>
     );
   }

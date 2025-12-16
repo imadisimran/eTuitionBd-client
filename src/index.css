@@ -43,9 +43,14 @@
   }
 }
 
-
 /* Margin after every section  */
 
-section,footer{
+section,
+footer {
   margin-top: 100px;
+}
+
+header a.active,
+#dashboard-sidebar a.active {
+  @apply bg-neutral text-white;
 }

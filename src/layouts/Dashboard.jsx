@@ -1,6 +1,6 @@
 import React from "react";
 import { CgProfile } from "react-icons/cg";
-import { Link, Outlet } from "react-router";
+import { Link, NavLink, Outlet } from "react-router";
 import logo from "../assets/logo.png";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import {
@@ -52,7 +52,10 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="drawer-side is-drawer-close:overflow-visible">
+      <div
+        className="drawer-side is-drawer-close:overflow-visible"
+        id="dashboard-sidebar"
+      >
         <label
           htmlFor="my-drawer-4"
           aria-label="close sidebar"
@@ -63,8 +66,9 @@ const Dashboard = () => {
           <ul className="menu w-full grow">
             {/* List item */}
             <li>
-              <Link
+              <NavLink
                 to="/dashboard"
+                end
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                 data-tip="Homepage"
               >
@@ -83,25 +87,25 @@ const Dashboard = () => {
                   <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                 </svg>
                 <span className="is-drawer-close:hidden">Homepage</span>
-              </Link>
+              </NavLink>
             </li>
 
             {/* List item */}
 
             <li>
-              <Link
+              <NavLink
                 to="/dashboard/profile"
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                 data-tip="Profile"
               >
                 <CgProfile />
                 <span className="is-drawer-close:hidden">Profile</span>
-              </Link>
+              </NavLink>
             </li>
 
             {role === "student" && (
               <li>
-                <Link
+                <NavLink
                   to="/dashboard/my-posts"
                   className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                   data-tip="My Posts"
@@ -109,14 +113,14 @@ const Dashboard = () => {
                   <MdPostAdd />
 
                   <span className="is-drawer-close:hidden">My Posts</span>
-                </Link>
+                </NavLink>
               </li>
             )}
 
             {role === "tutor" && (
               <>
                 <li>
-                  <Link
+                  <NavLink
                     to="/dashboard/my-applications"
                     className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                     data-tip="My Applications"
@@ -125,7 +129,7 @@ const Dashboard = () => {
                     <span className="is-drawer-close:hidden">
                       My Applications
                     </span>
-                  </Link>
+                  </NavLink>
                 </li>
               </>
             )}
@@ -133,24 +137,24 @@ const Dashboard = () => {
             {(role === "student" || role === "tutor") && (
               <>
                 <li>
-                  <Link
+                  <NavLink
                     to="/dashboard/my-tuitions"
                     className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                     data-tip="My Tuition"
                   >
                     <FaChalkboardTeacher />
                     <span className="is-drawer-close:hidden">My Tuition</span>
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
+                  <NavLink
                     to="/dashboard/payment-history"
                     className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                     data-tip="My Payments"
                   >
                     <MdPayments />
                     <span className="is-drawer-close:hidden">My Payments</span>
-                  </Link>
+                  </NavLink>
                 </li>
               </>
             )}
@@ -158,7 +162,7 @@ const Dashboard = () => {
             {role === "admin" && (
               <>
                 <li>
-                  <Link
+                  <NavLink
                     to="/dashboard/pending-tuitions"
                     className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                     data-tip="Pending Tuitions"
@@ -167,10 +171,10 @@ const Dashboard = () => {
                     <span className="is-drawer-close:hidden">
                       Pending Tuitions
                     </span>
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
+                  <NavLink
                     to="/dashboard/pending-tutors"
                     className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                     data-tip="Pending Tutors"
@@ -179,10 +183,10 @@ const Dashboard = () => {
                     <span className="is-drawer-close:hidden">
                       Pending Tutors
                     </span>
-                  </Link>
+                  </NavLink>
                 </li>
                 <li>
-                  <Link
+                  <NavLink
                     to="/dashboard/user-management"
                     className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                     data-tip="User Management"
@@ -191,7 +195,7 @@ const Dashboard = () => {
                     <span className="is-drawer-close:hidden">
                       User Management
                     </span>
-                  </Link>
+                  </NavLink>
                 </li>
               </>
             )}

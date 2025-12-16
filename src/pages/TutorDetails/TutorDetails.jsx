@@ -9,13 +9,14 @@ import {
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import SandClock from "../../components/SandClock";
 
 const TutorDetails = () => {
   const axiosSecure = useAxiosSecure();
 
   const { id } = useParams();
 
-  const { data: tutor } = useQuery({
+  const { data: tutor, isLoading } = useQuery({
     queryKey: ["tutor", id],
     queryFn: async () => {
       const result = await axiosSecure.get(`tutor/${id}`);
@@ -34,6 +35,14 @@ const TutorDetails = () => {
     subjects,
     education,
   } = tutorProfile || {};
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+        <SandClock size="200px"></SandClock>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-base-200 rounded-3xl mt-10 min-h-screen py-10 px-4">

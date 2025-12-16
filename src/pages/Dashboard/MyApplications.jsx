@@ -5,13 +5,14 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import EditApplicationModal from "./EditApplicationModal";
 import { Link } from "react-router";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
+import SandClock from "../../components/SandClock";
 
 const MyApplications = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const updateFormRef = useRef();
   const [selectedApplicationId, setSelectedApplicationId] = useState("");
-  const { data: applications = [] } = useQuery({
+  const { data: applications = [], isLoading } = useQuery({
     queryKey: ["applications", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(
@@ -28,7 +29,7 @@ const MyApplications = () => {
   };
 
   const queryClient = useQueryClient();
-  const { mutate: deleteFn } = useMutation({
+  const { mutate: deleteFn, isPending } = useMutation({
     mutationFn: (id) => {
       return axiosSecure.delete(`/application/${id}`);
     },
@@ -52,6 +53,14 @@ const MyApplications = () => {
       }
     );
   };
+
+  if (isLoading || isPending) {
+    return (
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+        <SandClock size="250px"></SandClock>
+      </div>
+    );
+  }
 
   return (
     <>

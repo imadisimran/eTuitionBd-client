@@ -36,7 +36,7 @@ const UserManagement = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      successAlert("Deleted Successfully");
+      successAlert("Role Changed Successfully");
     },
     onError: () => {
       errorAlert();
@@ -143,7 +143,7 @@ const UserManagement = () => {
                     Delete
                   </button>
                   <select
-                    defaultValue={user.role}
+                    value={user.role}
                     className="select select-xs max-w-20"
                     onChange={(e) =>
                       handleRoleChange(e.target.value, user.email)
