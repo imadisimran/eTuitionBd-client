@@ -8,6 +8,7 @@ import WhyChooseUs from "./WhyChooseUs";
 const Home = () => {
   return (
     <>
+    <title>eTuitionBD - Home</title>
       <HeroSection></HeroSection>
       <HowItWorks></HowItWorks>
       <WhyChooseUs></WhyChooseUs>

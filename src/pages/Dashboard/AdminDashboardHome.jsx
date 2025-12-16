@@ -33,7 +33,7 @@ const AdminDashboardHome = () => {
           <span className="text-primary">{totalTransaction[0]?.total}</span>
         </h2>
       </div>
-      <div className="h-[calc(100vh-80.36px)] bg-base-200 w-full p-10 rounded-3xl flex flex-col items-center md:items-start md:flex-row">
+      <div className="max-h-[calc(100vh-80.36px)] bg-base-200 w-full p-10 box-border rounded-3xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start overflow-y-scroll">
         {payments.map((data) => (
           <PaymentCard key={data._id} data={data}></PaymentCard>
         ))}

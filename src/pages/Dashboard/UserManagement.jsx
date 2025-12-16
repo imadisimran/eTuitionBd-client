@@ -120,9 +120,11 @@ const UserManagement = () => {
                 <td>
                   {user?.email}
                   <br />
-                  <span className="badge badge-ghost badge-sm">
-                    {user?.role}
-                  </span>
+                  {user?.status && (
+                    <span className="badge badge-ghost capitalize badge-sm">
+                      {user?.status}
+                    </span>
+                  )}
                 </td>
                 <td className="capitalize">{user?.role}</td>
                 <th>

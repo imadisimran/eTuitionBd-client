@@ -83,7 +83,7 @@ const AllTuitions = () => {
     );
     // console.log(cleanFilters);
     setFilterParams(cleanFilters);
-    setSelectedPage(1)
+    setSelectedPage(1);
   };
 
   const handleReset = () => {
@@ -96,7 +96,7 @@ const AllTuitions = () => {
       sortBy: "post_date",
     });
     setFilterParams({ sortBy: "post_date" });
-    setSelectedPage(1)
+    setSelectedPage(1);
   };
 
   if (isDivisionLoading || isLoading) {
@@ -109,6 +109,8 @@ const AllTuitions = () => {
 
   return (
     <section>
+      <title>eTuitionBD - Tuitions</title>
+
       <div className="drawer lg:drawer-open">
         <input id="filter-drawer" type="checkbox" className="drawer-toggle" />
 

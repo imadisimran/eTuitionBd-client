@@ -4,6 +4,7 @@ import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { errorAlert, successAlert } from "../../utilities/alerts";
+import SandClock from "../../components/SandClock";
 
 const AdminDashboardProfile = () => {
   const { user } = useAuth();
@@ -70,14 +71,16 @@ const AdminDashboardProfile = () => {
 
   if (isLoading || !adminData) {
     return (
-      <div className="p-10 text-center">
-        <span className="loading loading-spinner loading-lg"></span>
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+        <SandClock size="250px"></SandClock>
       </div>
     );
   }
 
   return (
     <div className="flex flex-col justify-center items-center h-full py-10">
+          <title>eTuitionBD - Profile</title>
+
       <div className="card w-full max-w-md bg-base-100 border shadow-xl p-8 flex flex-col items-center text-center">
         {/* Profile Image Wrapper */}
         <div className="relative">
