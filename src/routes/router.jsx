@@ -22,6 +22,8 @@ import PaymentHistory from "../pages/Dashboard/PaymentHistory";
 import AllTuitions from "../pages/AllTuitions/AllTuitions";
 import UserManagement from "../pages/Dashboard/UserManagement";
 import AllTutors from "../pages/AllTutors/AllTutors";
+import NotFound from "../pages/NotFound/NotFound";
+import PaymentCancel from "../pages/Dashboard/PaymentCancel";
 
 const router = createBrowserRouter([
   {
@@ -90,7 +92,7 @@ const router = createBrowserRouter([
       },
       {
         path: "payment-cancel",
-        element: <PaymentSuccess></PaymentSuccess>,
+        element: <PaymentCancel></PaymentCancel>,
       },
       {
         path: "my-posts",
@@ -110,6 +112,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+  { path: "/*", element: <NotFound></NotFound> },
 ]);
 
 export default router;

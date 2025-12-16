@@ -3,11 +3,12 @@ import React, { useState } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import UserDetailsModal from "./UserDetailsModal";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
+import SandClock from "../../components/SandClock";
 
 const UserManagement = () => {
   const axiosSecure = useAxiosSecure();
   const [selectedUser, setSelectedUser] = useState(null);
-  const { data: users = [] } = useQuery({
+  const { data: users = [], isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
       const result = await axiosSecure.get("/users");
@@ -17,7 +18,7 @@ const UserManagement = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: deleteFn } = useMutation({
+  const { mutate: deleteFn, isPending: deleteLoading } = useMutation({
     mutationFn: (email) => {
       return axiosSecure.delete(`/delete-user?email=${email}`);
     },
@@ -29,7 +30,7 @@ const UserManagement = () => {
       errorAlert();
     },
   });
-  const { mutate: roleUpdateFn } = useMutation({
+  const { mutate: roleUpdateFn, isPending: roleUpdateLoading } = useMutation({
     mutationFn: ({ email, role }) => {
       return axiosSecure.patch(`/user/role?email=${email}`, { role: role });
     },
@@ -65,6 +66,14 @@ const UserManagement = () => {
       }
     );
   };
+
+  if (isLoading || deleteLoading || roleUpdateLoading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+        <SandClock size="250px"></SandClock>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -134,6 +143,7 @@ const UserManagement = () => {
                     Delete
                   </button>
                   <select
+                    defaultValue={user.role}
                     className="select select-xs max-w-20"
                     onChange={(e) =>
                       handleRoleChange(e.target.value, user.email)

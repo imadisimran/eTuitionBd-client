@@ -7,7 +7,7 @@ import SandClock from "../../components/SandClock";
 const AllTutors = () => {
   const axiosNormal = useAxiosNormal();
   const { data: tutors = [], isLoading } = useQuery({
-    queryKey: ["tutors"],
+    queryKey: ["tutors","all"],
     queryFn: async () => {
       const result = await axiosNormal.get("/tutors");
       return result.data;

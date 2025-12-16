@@ -46,7 +46,7 @@ const TutorDetails = () => {
                 <img
                   src={
                     photoURL ||
-                    "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                    "https://cdn-icons-png.flaticon.com/512/6522/6522516.png"
                   }
                   alt={displayName}
                   className="object-cover"

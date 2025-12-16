@@ -2,6 +2,7 @@ import React from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { errorAlert, successAlert } from "../../utilities/alerts";
+import SandClock from "../../components/SandClock";
 
 const EditApplicationModal = ({ selectedApplicationId, updateFormRef }) => {
   const axiosSecure = useAxiosSecure();
@@ -51,7 +52,7 @@ const EditApplicationModal = ({ selectedApplicationId, updateFormRef }) => {
   return (
     <dialog ref={updateFormRef} className="modal modal-bottom sm:modal-middle">
       {isLoading ? (
-        <span className="loading loading-spinner loading-xl"></span>
+        <SandClock size="100px"></SandClock>
       ) : (
         <div className="modal-box">
           {/* Modal Header */}

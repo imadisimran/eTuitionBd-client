@@ -73,7 +73,7 @@ const ApplicationsModal = ({
                         <div className="avatar">
                           <div className="mask mask-squircle h-12 w-12">
                             <img
-                              src={application?.tutorImage}
+                              src={application?.tutorImage ?? "https://cdn-icons-png.flaticon.com/512/8608/8608769.png"}
                               alt={application?.tutorName}
                             />
                           </div>

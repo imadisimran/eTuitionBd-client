@@ -4,7 +4,6 @@ import useAxiosNormal from "../../hooks/useAxiosNormal";
 import TuitionCard from "../../components/TuitionCard";
 import { useForm, useWatch } from "react-hook-form";
 import axios from "axios";
-import SmallLoader from "../../components/SmallLoader";
 import SandClock from "../../components/SandClock";
 
 const subjectOptions = [
