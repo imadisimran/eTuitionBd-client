@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useEffect } from "react";
 import useAuth from "./useAuth";
-import { LogOut } from "lucide-react";
 import { auth } from "../firebase/firebase.config";
 
 const axiosSecure = axios.create({
@@ -38,8 +37,8 @@ const useAxiosSecure = () => {
     );
 
     return () => {
-      axios.interceptors.request.eject(requestInterceptor);
-      axios.interceptors.response.eject(responseInterceptor);
+      axiosSecure.interceptors.request.eject(requestInterceptor);
+      axiosSecure.interceptors.response.eject(responseInterceptor);
     };
   }, [user, logOut]);
 

@@ -20,7 +20,7 @@ const AdminDashboardHome = () => {
       return result.data;
     },
   });
-  console.log(totalTransaction);
+  // console.log(totalTransaction);
   return (
     <div className="flex gap-5 flex-col md:flex-row justify-center items-center md:items-start">
       <div>

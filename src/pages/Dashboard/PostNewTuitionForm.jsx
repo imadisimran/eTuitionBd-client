@@ -36,7 +36,7 @@ const PostNewTuitionForm = () => {
     formState: { errors },
   } = useForm();
 
-  const { data: foundUser = {} } = useQuery({
+  const { data: foundUser } = useQuery({
     queryKey: ["user", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(`/user?email=${user?.email}`);
@@ -49,7 +49,7 @@ const PostNewTuitionForm = () => {
   useEffect(() => {
     if (user && foundUser) {
       reset({
-        name: user?.displayName,
+        name: foundUser?.displayName,
         email: user?.email,
         studentClass: formatClass(foundUser?.studentInfo?.class),
         title: "",
