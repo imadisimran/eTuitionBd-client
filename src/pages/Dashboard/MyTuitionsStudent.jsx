@@ -3,11 +3,12 @@ import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
 import { longDate, longDateFromS } from "../../utilities/formatDate";
+import SandClock from "../../components/SandClock";
 
 const MyTuitionsStudent = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { data: tuitions = [] } = useQuery({
+  const { data: tuitions = [], isLoading } = useQuery({
     queryKey: [user?.email, "tuitions"],
     queryFn: async () => {
       const result = await axiosSecure.get(
@@ -17,7 +18,15 @@ const MyTuitionsStudent = () => {
     },
   });
 
-  console.log(tuitions);
+  // console.log(tuitions);
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+        <SandClock size="200px"></SandClock>
+      </div>
+    );
+  }
 
   return (
     <div>

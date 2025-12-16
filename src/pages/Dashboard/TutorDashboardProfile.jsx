@@ -115,7 +115,7 @@ const TutorDashboardProfile = () => {
 
   // 5. Update Profile Logic
   const updateForm = (data) => {
-    console.log(data);
+    // console.log(data);
     // Transform subjects back to simple array of strings for backend
     const formattedData = {
       ...data,
@@ -124,7 +124,7 @@ const TutorDashboardProfile = () => {
         subjects: data.tutorProfile.subjects.map((item) => item.value),
       },
     };
-    console.log(formattedData);
+    // console.log(formattedData);
     confirmation(
       "Are you sure about updating?",
       "This information will be saved to your profile",

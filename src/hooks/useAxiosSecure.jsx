@@ -5,7 +5,7 @@ import { LogOut } from "lucide-react";
 import { auth } from "../firebase/firebase.config";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: "https://e-tuition-bd-server-gamma.vercel.app",
 });
 
 const useAxiosSecure = () => {

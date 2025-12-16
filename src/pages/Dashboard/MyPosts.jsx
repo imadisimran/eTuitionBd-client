@@ -7,6 +7,7 @@ import { longDate } from "../../utilities/formatDate";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 import EditTuitionModal from "./EditTuitionModal";
 import ApplicationsModal from "./ApplicationsModal";
+import SandClock from "../../components/SandClock";
 
 const MyPosts = () => {
   const [selectedTuitionId, setSelectedTuitionId] = useState("");
@@ -16,7 +17,7 @@ const MyPosts = () => {
   const axiosSecure = useAxiosSecure();
   const editModalRef = useRef();
   const applicationsModalRef = useRef();
-  const { data: tuitions = [], refetch } = useQuery({
+  const { data: tuitions = [], refetch,isLoading } = useQuery({
     queryKey: [user?.email, "tuitions"],
     queryFn: async () => {
       const result = await axiosSecure.get(`/my-tuitions?email=${user?.email}`);
@@ -52,6 +53,12 @@ const MyPosts = () => {
     setSelectedTuitionApplication(id);
     applicationsModalRef.current.showModal();
   };
+
+  if(isLoading){
+    return <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+      <SandClock size="200px"></SandClock>
+    </div>
+  }
 
   return (
     <>

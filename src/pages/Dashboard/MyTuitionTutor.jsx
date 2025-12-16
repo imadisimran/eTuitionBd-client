@@ -2,11 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
+import SandClock from "../../components/SandClock";
 
 const MyTuitionTutor = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const { data: applications = [] } = useQuery({
+  const { data: applications = [], isLoading } = useQuery({
     queryKey: ["applications", "tutor", user?.email],
     queryFn: async () => {
       const result = await axiosSecure.get(
@@ -16,6 +17,15 @@ const MyTuitionTutor = () => {
     },
     enabled: !!user?.email,
   });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center w-full h-[calc(100vh-80px)]">
+        <SandClock size="200px"></SandClock>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="overflow-x-auto">
