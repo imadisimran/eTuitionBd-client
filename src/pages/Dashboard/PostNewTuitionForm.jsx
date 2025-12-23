@@ -3,8 +3,8 @@ import React, { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
-import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
-import { useNavigate } from "react-router";
+import { errorAlert, successAlert } from "../../utilities/alerts";
+// import { useNavigate } from "react-router";
 import { formatClass } from "../../utilities/textFormatter";
 
 const subjectOptions = [
@@ -27,7 +27,7 @@ const PostNewTuitionForm = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const formRef = useRef();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   const {
     register,
@@ -94,18 +94,19 @@ const PostNewTuitionForm = () => {
         <button
           className="btn btn-primary text-white"
           onClick={
-            foundUser?.profileStatus?.isReady
-              ? () => formRef.current.showModal()
-              : () => {
-                  confirmation(
-                    "Your profile is not completed",
-                    "Complete your profile to post new tuition",
-                    "Complete Now",
-                    () => {
-                      navigate("/dashboard/profile");
-                    }
-                  );
-                }
+            // foundUser?.profileStatus?.isReady
+            //   ? () => formRef.current.showModal()
+            //   : () => {
+            //       confirmation(
+            //         "Your profile is not completed",
+            //         "Complete your profile to post new tuition",
+            //         "Complete Now",
+            //         () => {
+            //           navigate("/dashboard/profile");
+            //         }
+            //       );
+            //     }
+            () => formRef.current.showModal()
           }
         >
           Post New Tuition

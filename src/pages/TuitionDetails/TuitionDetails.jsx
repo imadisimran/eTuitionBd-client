@@ -104,7 +104,7 @@ const TuitionDetails = () => {
 
   return (
     <>
-        <title>eTuitionBD - Tuition Details</title>
+      <title>eTuitionBD - Tuition Details</title>
 
       <div className="md:my-10">
         {/* Main Card Container */}
