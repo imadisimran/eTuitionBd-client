@@ -124,9 +124,16 @@ const Navbar = () => {
               Login
             </Link>
           )}
-          <Link to="/dashboard/my-posts" className="btn btn-secondary">
-            Post Tuition
-          </Link>
+          {dbUser?.role === "student" && (
+            <Link to="/dashboard/my-posts" className="btn btn-secondary">
+              Post Tuition
+            </Link>
+          )}
+          {!!user || (
+            <Link to="/dashboard/my-posts" className="btn btn-secondary">
+              Post Tuition
+            </Link>
+          )}
         </div>
       </div>
     </header>
