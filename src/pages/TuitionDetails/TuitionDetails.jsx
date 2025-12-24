@@ -194,9 +194,9 @@ const TuitionDetails = () => {
                     <div>
                       <p className="text-xs text-gray-500">Location</p>
                       <p className="font-bold text-lg">
-                        {location.division}, {location.district}
+                        {location?.division}, {location?.district}
                       </p>
-                      <p className="text-gray-600 mt-1">{location.address}</p>
+                      <p className="text-gray-600 mt-1">{location?.address}</p>
                     </div>
                   </div>
                 </div>
