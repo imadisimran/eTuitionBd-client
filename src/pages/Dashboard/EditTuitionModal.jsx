@@ -81,7 +81,7 @@ const EditTuitionModal = ({ selectedTuitionId, editModalRef }) => {
     const structuredData = {
       title: data.title,
       subject: data.subject,
-      class: data.class,
+      // class: data.class,
       medium: data.medium,
       salaryRange: {
         min: Number(data.salaryMin),
