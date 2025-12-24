@@ -152,7 +152,8 @@ const EditTuitionModal = ({ selectedTuitionId, editModalRef }) => {
                 type="text"
                 placeholder="Class 8"
                 className="input input-bordered w-full"
-                {...register("class", { required: true })}
+                {...register("class")}
+                readOnly
               />
             </div>
             <div className="form-control">
