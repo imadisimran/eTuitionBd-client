@@ -12,6 +12,7 @@ const Login = () => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
   const location = useLocation();
@@ -31,10 +32,31 @@ const Login = () => {
       });
   };
 
+  const fillWithDemo = ({email,password}) => {
+    setValue("email", email);
+    setValue("password", password);
+  };
+
   return (
     <div className="flex justify-center items-center h-full">
       <div className="bg-white w-full [&_input]:w-full max-w-[500px] p-10 rounded-3xl">
-        <h3 className="text-xl font-bold text-center">Login</h3>
+        <h3 className="text-xl font-bold text-center flex relative justify-center">
+          <span>Login</span>{" "}
+          <details className="dropdown absolute right-0">
+            <summary className="m-1 btn btn-secondary ">Demo Credentials</summary>
+            <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+              <li>
+                <button onClick={()=>fillWithDemo({email:"student1@mail.com",password:"BD loose"})} className="btn btn-ghost btn-primary">Student</button>
+              </li>
+              <li>
+                <button onClick={()=>fillWithDemo({email:"tutor1@mail.com",password:"BD loose"})} className="btn btn-ghost btn-primary">Tutor</button>
+              </li>
+              <li>
+                <button onClick={()=>fillWithDemo({email:"hero@admin.com",password:"heroAdmin"})} className="btn btn-ghost btn-primary">Admin</button>
+              </li>
+            </ul>
+          </details>
+        </h3>
 
         <form onSubmit={handleSubmit(handleLogin)}>
           <fieldset className="fieldset flex flex-col gap-2">
