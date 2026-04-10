@@ -5,7 +5,7 @@ const SubmitBtn = ({ txt }) => {
     // console.log('clicked')
   const { loading } = useAuth();
   return (
-    <button className="btn btn-secondary mt-5">
+    <button className="btn btn-secondary mt-5 w-full">
       {loading ? (
         <span className="loading loading-bars loading-xl"></span>
       ) : (
