@@ -49,7 +49,10 @@ const TuitionCard = ({ tuition }) => {
                 {formatClass(classGrade)}
               </span>
             </div>
-            <span className="text-base-300">•</span>
+            
+            {/* FIXED: Changed text-base-300 to text-neutral/30 for dynamic visibility */}
+            <span className="text-neutral/30">•</span>
+            
             <div className="flex items-center gap-2">
               <BookOpen className="w-4 h-4 text-accent" />
               <span className="capitalize">{formatWith_(medium)}</span>

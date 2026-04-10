@@ -183,9 +183,11 @@ const FeatureCard = styled.div`
     width: 100%;
     padding: 2.5rem 2rem;
     border-radius: 30px;
-    background: #edf2f7; /* Matches base-200 */
+    
+    /* Uses your DaisyUI theme variable so it automatically switches */
+    background: var(--color-base-200); 
 
-    /* Neumorphic Shadows for #edf2f7 */
+    /* Light mode drop shadows */
     box-shadow: 9px 9px 18px #d1d9e6, -9px -9px 18px #ffffff;
 
     transition: all 0.3s ease;
@@ -194,6 +196,12 @@ const FeatureCard = styled.div`
     align-items: flex-start;
     text-align: left;
     height: 100%;
+  }
+
+  /* Dark mode drop shadows */
+  [data-theme="dark"] & .card-content {
+    /* Uses your base-100 color for the dark shadow, and a lighter tint for the highlight */
+    box-shadow: 9px 9px 18px #111827, -9px -9px 18px #2d3b4f;
   }
 
   /* Hover Effect: Lift up slightly */
@@ -210,17 +218,22 @@ const FeatureCard = styled.div`
     justify-content: center;
     margin-bottom: 1.5rem;
 
-    /* Inset shadow for the icon container (pressed look) */
-    background: #edf2f7;
+    background: var(--color-base-200);
+    
+    /* Light mode inset shadows */
     box-shadow: inset 4px 4px 8px #d1d9e6, inset -4px -4px 8px #ffffff;
 
     transition: color 0.3s ease;
   }
 
+  /* Dark mode inset shadows */
+  [data-theme="dark"] & .icon-wrapper {
+    box-shadow: inset 4px 4px 8px #111827, inset -4px -4px 8px #2d3b4f;
+  }
+
   .card-content:hover .icon-wrapper {
-    color: var(
-      --color-secondary
-    ); /* Optional: Changes icon color on card hover */
+    /* Uses your CSS variable for the hover state */
+    color: var(--color-secondary); 
   }
 `;
 

@@ -1,50 +1,51 @@
 @import "tailwindcss";
+
 @plugin "daisyui" {
   themes: light --default;
 }
+
 @plugin "daisyui/theme" {
   name: "light";
   default: true;
   /* Brand Colors */
-  --color-primary: #006a4e; /* Emerald Slate - Trust & Growth */
-  --color-secondary: #ff6f61; /* Living Coral - Action & Energy */
-  --color-accent: #e1c16e; /* Golden Paddy - Premium/Verified */
+  --color-primary: #006a4e; 
+  --color-secondary: #ff6f61; 
+  --color-accent: #e1c16e; 
 
   /* Interface Colors */
-  --color-neutral: #1a202c; /* Deep Charcoal - Readable Text */
-  --color-base-100: #f7fafc; /* Cloud White - Clean Background */
-  --color-base-200: #edf2f7; /* Slightly darker for cards/sidebars */
-  --color-base-300: #e2e8f0; /* Borders */
+  --color-neutral: #1a202c; 
+  --color-base-100: #f7fafc; 
+  --color-base-200: #edf2f7; 
+  --color-base-300: #e2e8f0; 
 
-  /* Semantic Colors (Feedback) */
+  /* Semantic Colors */
   --color-info: #3abff8;
-  --color-success: #36d399; /* Green for Approved/Success */
-  --color-warning: #fbbd23; /* Yellow for Pending */
-  --color-error: #f87272; /* Red for Rejected/Delete */
+  --color-success: #36d399; 
+  --color-warning: #fbbd23; 
+  --color-error: #f87272; 
 }
 
-@layer utilities {
-  .glass-card {
-    background: rgba(255, 255, 255, 0.75);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.5);
-    box-shadow: 0 8px 32px 0 rgba(0, 106, 78, 0.05); /* Subtle green shadow */
-  }
+@plugin "daisyui/theme" {
+  name: "dark";
+  /* Brand Colors - adjusted for dark mode contrast */
+  --color-primary: #00a378;
+  --color-secondary: #ff8a7e;
+  --color-accent: #f2d48f;
 
-  /* Neobrutalist Button Shadow (Optional for 'Post Tuition' buttons) */
-  .btn-neo {
-    box-shadow: 4px 4px 0px 0px #1a202c; /* Hard black shadow */
-    transition: all 0.2s ease;
-  }
-  .btn-neo:active {
-    box-shadow: 0px 0px 0px 0px #1a202c;
-    transform: translate(4px, 4px);
-  }
+  /* Interface Colors - deep backgrounds with lighter text */
+  --color-neutral: #f7fafc; /* Invert neutral so text on neutral bg is dark */
+  --color-base-100: #111827; /* Deep dark background */
+  --color-base-200: #1f2937; /* Lighter dark for cards/sidebars */
+  --color-base-300: #374151; /* Borders and dividers */
+
+  /* Semantic Colors */
+  --color-info: #3abff8;
+  --color-success: #36d399;
+  --color-warning: #fbbd23;
+  --color-error: #f87272;
 }
 
 /* Margin after every section  */
-
 section,
 footer {
   margin-top: 100px;
@@ -52,5 +53,6 @@ footer {
 
 header a.active,
 #dashboard-sidebar a.active {
-  @apply bg-neutral text-white;
+  /* Use base-100 so text adapts automatically depending on light/dark mode */
+  @apply bg-neutral text-base-100;
 }

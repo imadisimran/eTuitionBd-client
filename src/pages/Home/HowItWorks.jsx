@@ -60,15 +60,29 @@ const HowItWorks = () => {
 // --- STYLED COMPONENTS ---
 
 const SectionWrapper = styled.section`
-  /* Inherits bg-base-200 (#edf2f7) via the className */
   padding: 80px 0;
-  /* Ensure this matches your section spacing rule */
   margin-top: 100px;
 `;
 
 const CardWrapper = styled.div`
   display: flex;
   justify-content: center;
+
+  /* Define Neumorphic variables. 
+    Defaults to Light Mode colors.
+  */
+  --neu-bg: var(--color-base-200, #edf2f7);
+  --neu-shadow-light: #ffffff;
+  --neu-shadow-dark: #d1d9e6;
+
+  /* Dark Mode Overrides.
+    This targets DaisyUI's dark theme attribute and standard OS dark mode.
+  */
+  :global([data-theme="dark"]) &,
+  @media (prefers-color-scheme: dark) {
+    --neu-shadow-light: rgba(255, 255, 255, 0.03);
+    --neu-shadow-dark: rgba(0, 0, 0, 0.5);
+  }
 
   .neumorphic-card {
     width: 100%;
@@ -81,12 +95,9 @@ const CardWrapper = styled.div`
     text-align: center;
     transition: transform 0.3s ease;
 
-    /* CRITICAL: Neumorphism adapted for your #edf2f7 (base-200) background.
-      - Light shadow: Pure white (#ffffff)
-      - Dark shadow: A cool grey (#d1d9e6) to match your blue-ish tone
-    */
-    background: #edf2f7;
-    box-shadow: 10px 10px 20px #d1d9e6, -10px -10px 20px #ffffff;
+    background: var(--neu-bg);
+    /* Removed the negative offset light shadow to eliminate the white glow */
+    box-shadow: 1px 1px 10px var(--neu-shadow-dark);
   }
 
   .neumorphic-card:hover {
@@ -102,9 +113,11 @@ const CardWrapper = styled.div`
     justify-content: center;
     margin-bottom: 1.5rem;
 
-    /* Inset shadow gives the "pressed" button look */
-    background: #edf2f7;
-    box-shadow: inset 5px 5px 10px #d1d9e6, inset -5px -5px 10px #ffffff;
+    background: var(--neu-bg);
+    /* Kept the light shadow here as an inset so the step circle retains its 3D depth */
+    box-shadow:
+      inset 5px 5px 10px var(--neu-shadow-dark),
+      inset 5px 5px 10px var(--neu-shadow-light);
   }
 `;
 

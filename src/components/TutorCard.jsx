@@ -28,7 +28,8 @@ const TutorCard = ({ tutor }) => {
       {/* --- Content Section --- */}
       <div className="card-body items-center text-center p-6">
         {/* Name & Qualification */}
-        <h2 className="card-title text-2xl font-bold text-gray-800">
+        {/* Replaced text-gray-800 with text-neutral */}
+        <h2 className="card-title text-2xl font-bold text-neutral">
           {displayName}
         </h2>
         <div className="badge badge-secondary badge-outline mt-1 px-3 py-3">
@@ -36,13 +37,15 @@ const TutorCard = ({ tutor }) => {
         </div>
 
         {/* Institution (with Icon) */}
-        <p className="mt-4 flex items-center justify-center gap-2 text-gray-600 font-medium">
+        {/* Replaced text-gray-600 with text-neutral/80 */}
+        <p className="mt-4 flex items-center justify-center gap-2 text-neutral/80 font-medium">
           <FaUniversity className="text-primary" />
           <span className="truncate max-w-[200px]">{institution || "N/A"}</span>
         </p>
 
         {/* Experience Stat */}
-        <div className="mt-2 text-sm text-gray-500">
+        {/* Replaced text-gray-500 with text-neutral/70 */}
+        <div className="mt-2 text-sm text-neutral/70">
           <span className="font-bold text-accent text-lg">{experience}+</span>{" "}
           Years Experience
         </div>
