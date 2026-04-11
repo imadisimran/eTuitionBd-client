@@ -3,7 +3,6 @@ import { useForm, useWatch } from "react-hook-form";
 import useAuth from "../../hooks/useAuth";
 import SubmitBtn from "./SubmitBtn";
 import { errorAlert, successAlert } from "../../utilities/alerts";
-// import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useLocation, useNavigate } from "react-router";
 import useAxiosNormal from "../../hooks/useAxiosNormal";
 
@@ -38,13 +37,13 @@ const TutorRegister = () => {
         const formData = {
           displayName: name,
           email: result.user.email,
-          institution: data.institution,
+          institution: data?.institution,
           role: "tutor",
         };
         const dbResult = await axiosNormal.post("/user", formData);
 
         // console.log(dbResult);
-        if (dbResult.data) {
+        if (dbResult.data?.acknowledged) {
           navigate(location.state || "/");
           successAlert("Registration Successful");
         }

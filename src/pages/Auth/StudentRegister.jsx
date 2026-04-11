@@ -40,9 +40,12 @@ const StudentRegister = () => {
         const dbResult = await axiosNormal.post("/user", formData);
 
         // console.log(dbResult);
-        if (dbResult.data) {
+        if (dbResult.data?.acknowledged) {
           navigate(location.state || "/");
           successAlert("Registration Successful");
+        }
+        else{
+          errorAlert()
         }
       }
     } catch (error) {
