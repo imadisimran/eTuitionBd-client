@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
@@ -7,6 +7,8 @@ import axios from "axios";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 import CircularProgress from "./CircularProgress";
 import { X } from "lucide-react";
+import useProvider from "../../hooks/useProvider";
+import UpdatePasswordModal from "./UpdatePasswordModal";
 
 // For understanding the code visit https://gemini.google.com/share/cbde812d745a
 
@@ -29,6 +31,8 @@ const subjectOptions = [
 const TutorDashboardProfile = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const { providerInfo } = useProvider();
+  const updatePasswordModalRef = useRef();
 
   // 1. Fetch User Data
   const {
@@ -142,7 +146,7 @@ const TutorDashboardProfile = () => {
             console.log(error);
             errorAlert("Something went wrong");
           });
-      }
+      },
     );
   };
 
@@ -159,7 +163,7 @@ const TutorDashboardProfile = () => {
     try {
       const result = await axios.post(
         `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imageApi}`,
-        formData
+        formData,
       );
 
       if (result.data.success) {
@@ -169,7 +173,7 @@ const TutorDashboardProfile = () => {
 
         const result2 = await axiosSecure.patch(
           `/user?email=${user?.email}`,
-          data
+          data,
         );
 
         if (result2.data.modifiedCount) {
@@ -184,270 +188,293 @@ const TutorDashboardProfile = () => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-10">
-      {/* --- LEFT SIDE: Profile Image --- */}
-      <div className="flex flex-col items-center">
-        <div className="w-40 h-40 border-4 border-primary/20 rounded-full overflow-hidden mb-4">
-          <img
-            className="w-full h-full object-cover"
-            src={foundUser?.photoURL}
-            alt={foundUser?.displayName}
-          />
-        </div>
-
-        {/* Update Profile Image Form */}
-        <form
-          onSubmit={handleUpdateProfilePicture}
-          className="flex flex-col items-center gap-2 mb-6"
-        >
-          <input
-            name="profilePic"
-            type="file"
-            className="file-input file-input-bordered file-input-xs w-full max-w-xs"
-          />
-          <button className="btn btn-secondary btn-xs btn-outline">
-            Update Picture
-          </button>
-        </form>
-
-        <h2 className="text-2xl font-bold text-center">
-          {foundUser?.displayName}
-        </h2>
-        <p className="badge badge-primary badge-outline mt-2 capitalize">
-          {foundUser?.role || "Tutor"}
-        </p>
-        <p className="badge badge-accent badge-outline mt-2 capitalize">
-          {foundUser?.tutorProfile?.status || "Pending"}
-        </p>
-
-        <div className="mt-8">
-          <CircularProgress
-            percentage={foundUser?.profileStatus?.percent || 0}
-          />
-        </div>
-      </div>
-
-      {/* --- RIGHT SIDE: Main Form --- */}
-      <div className="flex-1">
-        <form
-          className="flex flex-col gap-6"
-          onSubmit={handleSubmit(updateForm)}
-        >
-          {/* 1. Basic Info */}
-          <div className="card bg-base-100 border p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl mb-4 font-semibold text-primary">
-              Basic Info
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="label">Name</label>
-                <input
-                  defaultValue={foundUser?.displayName}
-                  readOnly
-                  type="text"
-                  className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
-                />
-              </div>
-              <div>
-                <label className="label">Email</label>
-                <input
-                  defaultValue={user?.email}
-                  readOnly
-                  type="email"
-                  className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
-                />
-              </div>
-              <div>
-                <label className="label">Phone</label>
-                <input
-                  {...register("phone")}
-                  type="text"
-                  className="input input-bordered w-full"
-                  placeholder="017..."
-                />
-              </div>
-              <div>
-                <label className="label">Gender</label>
-                <select
-                  {...register("tutorProfile.gender")}
-                  className="select select-bordered w-full"
-                >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                </select>
-              </div>
-              <div className="md:col-span-2">
-                <label className="label">Bio</label>
-                <textarea
-                  {...register("tutorProfile.bio")}
-                  className="textarea textarea-bordered w-full"
-                  placeholder="Tell us about yourself..."
-                  rows="3"
-                ></textarea>
-              </div>
-            </div>
+    <>
+      <div className="flex flex-col lg:flex-row gap-10">
+        {/* --- LEFT SIDE: Profile Image --- */}
+        <div className="flex flex-col items-center">
+          <div className="w-40 h-40 border-4 border-primary/20 rounded-full overflow-hidden mb-4">
+            <img
+              className="w-full h-full object-cover"
+              src={foundUser?.photoURL}
+              alt={foundUser?.displayName}
+            />
           </div>
 
-          {/* 2. Professional Info */}
-          <div className="card bg-base-100 border p-6 rounded-lg shadow-sm">
-            <h2 className="text-xl mb-4 font-semibold text-primary">
-              Professional Info
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="label">Current Institution</label>
-                <input
-                  {...register("tutorProfile.institution")}
-                  type="text"
-                  className="input input-bordered w-full"
-                  placeholder="e.g. Dhaka University"
-                />
-              </div>
-              <div>
-                <label className="label">Highest Qualification</label>
-                <input
-                  {...register("tutorProfile.qualification")}
-                  type="text"
-                  className="input input-bordered w-full"
-                  placeholder="e.g. BSc in Physics"
-                />
-              </div>
-              <div>
-                <label className="label">Experience In Years</label>
-                <input
-                  {...register("tutorProfile.experience")}
-                  type="number"
-                  className="input input-bordered w-full"
-                  placeholder="e.g. 2"
-                />
+          {/* Update Profile Image Form */}
+          <form
+            onSubmit={handleUpdateProfilePicture}
+            className="flex flex-col items-center gap-2 mb-6"
+          >
+            <input
+              name="profilePic"
+              type="file"
+              className="file-input file-input-bordered file-input-xs w-full max-w-xs"
+            />
+            <button className="btn btn-secondary btn-xs btn-outline">
+              Update Picture
+            </button>
+          </form>
+
+          <h2 className="text-2xl font-bold text-center">
+            {foundUser?.displayName}
+          </h2>
+          {providerInfo.provider === "password" && (
+            <button
+              className="btn btn-primary"
+              onClick={() => updatePasswordModalRef.current.showModal()}
+            >
+              Update Password
+            </button>
+          )}
+          <p className="badge badge-primary badge-outline mt-2 capitalize">
+            {foundUser?.role || "Tutor"}
+          </p>
+          <p className="badge badge-accent badge-outline mt-2 capitalize">
+            {foundUser?.tutorProfile?.status || "Pending"}
+          </p>
+
+          <div className="mt-8">
+            <CircularProgress
+              percentage={foundUser?.profileStatus?.percent || 0}
+            />
+          </div>
+        </div>
+
+        {/* --- RIGHT SIDE: Main Form --- */}
+        <div className="flex-1">
+          <form
+            className="flex flex-col gap-6"
+            onSubmit={handleSubmit(updateForm)}
+          >
+            {/* 1. Basic Info */}
+            <div className="card bg-base-100 border p-6 rounded-lg shadow-sm">
+              <h2 className="text-xl mb-4 font-semibold text-primary">
+                Basic Info
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Name</label>
+                  <input
+                    defaultValue={foundUser?.displayName}
+                    readOnly
+                    type="text"
+                    className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
+                  />
+                </div>
+                <div>
+                  <label className="label">Email</label>
+                  <input
+                    defaultValue={user?.email}
+                    readOnly
+                    type="email"
+                    className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
+                  />
+                </div>
+                <div>
+                  <label className="label">Phone</label>
+                  <input
+                    {...register("phone")}
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder="017..."
+                  />
+                </div>
+                <div>
+                  <label className="label">Gender</label>
+                  <select
+                    {...register("tutorProfile.gender")}
+                    className="select select-bordered w-full"
+                  >
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                  </select>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="label">Bio</label>
+                  <textarea
+                    {...register("tutorProfile.bio")}
+                    className="textarea textarea-bordered w-full"
+                    placeholder="Tell us about yourself..."
+                    rows="3"
+                  ></textarea>
+                </div>
               </div>
             </div>
 
-            {/* Subjects (Dynamic) */}
-            <div className="mt-6">
-              <label className="label font-semibold">Preferred Subjects</label>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {subjectFields.map((field, index) => (
-                  <div key={field.id} className="flex items-center gap-1">
-                    <select
-                      className="select select-bordered w-full"
-                      defaultValue=""
-                      {...register(`tutorProfile.subjects.${index}.value`)}
-                    >
-                      <option value="" disabled>
-                        Select Subject
-                      </option>
-                      {subjectOptions.map((sub, index) => (
-                        <option key={index} value={sub.value}>
-                          {sub.label}
+            {/* 2. Professional Info */}
+            <div className="card bg-base-100 border p-6 rounded-lg shadow-sm">
+              <h2 className="text-xl mb-4 font-semibold text-primary">
+                Professional Info
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Current Institution</label>
+                  <input
+                    {...register("tutorProfile.institution")}
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder="e.g. Dhaka University"
+                  />
+                </div>
+                <div>
+                  <label className="label">Highest Qualification</label>
+                  <input
+                    {...register("tutorProfile.qualification")}
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder="e.g. BSc in Physics"
+                  />
+                </div>
+                <div>
+                  <label className="label">Experience In Years</label>
+                  <input
+                    {...register("tutorProfile.experience")}
+                    type="number"
+                    className="input input-bordered w-full"
+                    placeholder="e.g. 2"
+                  />
+                </div>
+              </div>
+
+              {/* Subjects (Dynamic) */}
+              <div className="mt-6">
+                <label className="label font-semibold">
+                  Preferred Subjects
+                </label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {subjectFields.map((field, index) => (
+                    <div key={field.id} className="flex items-center gap-1">
+                      <select
+                        className="select select-bordered w-full"
+                        defaultValue=""
+                        {...register(`tutorProfile.subjects.${index}.value`)}
+                      >
+                        <option value="" disabled>
+                          Select Subject
                         </option>
-                      ))}
-                    </select>
+                        {subjectOptions.map((sub, index) => (
+                          <option key={index} value={sub.value}>
+                            {sub.label}
+                          </option>
+                        ))}
+                      </select>
+                      <button
+                        type="button"
+                        onClick={() => removeSubject(index)}
+                        className="btn btn-xs btn-circle btn-error text-white"
+                      >
+                        <X />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => appendSubject({ value: "" })}
+                  className="btn btn-sm btn-outline btn-primary"
+                >
+                  + Add Subject
+                </button>
+              </div>
+            </div>
+
+            {/* 3. Education History */}
+            <div className="card bg-base-100 border p-6 rounded-lg shadow-sm">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-primary">
+                  Education History
+                </h2>
+                <button
+                  type="button"
+                  onClick={() =>
+                    appendEducation({
+                      degree: "",
+                      year: "",
+                      result: "",
+                      institute: "",
+                    })
+                  }
+                  className="btn btn-sm btn-primary"
+                >
+                  + Add Education
+                </button>
+              </div>
+
+              <div className="flex flex-col gap-4">
+                {educationFields.map((field, index) => (
+                  <div
+                    key={field.id}
+                    className="p-4 border rounded-md bg-base-50 relative grid grid-cols-1 md:grid-cols-2 gap-4"
+                  >
                     <button
                       type="button"
-                      onClick={() => removeSubject(index)}
-                      className="btn btn-xs btn-circle btn-error text-white"
+                      onClick={() => removeEducation(index)}
+                      className="btn btn-xs btn-circle btn-error text-white absolute -top-2 -right-2"
                     >
                       <X />
                     </button>
+
+                    <div>
+                      <label className="label label-text-alt">
+                        Degree/Exam
+                      </label>
+                      <input
+                        {...register(`tutorProfile.education.${index}.degree`)}
+                        placeholder="e.g. HSC"
+                        className="input input-sm input-bordered w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="label label-text-alt">Institute</label>
+                      <input
+                        {...register(
+                          `tutorProfile.education.${index}.institute`,
+                        )}
+                        placeholder="Institute Name"
+                        className="input input-sm input-bordered w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="label label-text-alt">
+                        Passing Year
+                      </label>
+                      <input
+                        {...register(`tutorProfile.education.${index}.year`)}
+                        placeholder="e.g. 2020"
+                        className="input input-sm input-bordered w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="label label-text-alt">Result/GPA</label>
+                      <input
+                        {...register(`tutorProfile.education.${index}.result`)}
+                        placeholder="e.g. GPA 5.00"
+                        className="input input-sm input-bordered w-full"
+                      />
+                    </div>
                   </div>
                 ))}
+                {educationFields.length === 0 && (
+                  <p className="text-sm text-gray-400 italic">
+                    No education history added yet.
+                  </p>
+                )}
               </div>
-              <button
-                type="button"
-                onClick={() => appendSubject({ value: "" })}
-                className="btn btn-sm btn-outline btn-primary"
-              >
-                + Add Subject
-              </button>
-            </div>
-          </div>
-
-          {/* 3. Education History */}
-          <div className="card bg-base-100 border p-6 rounded-lg shadow-sm">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold text-primary">
-                Education History
-              </h2>
-              <button
-                type="button"
-                onClick={() =>
-                  appendEducation({
-                    degree: "",
-                    year: "",
-                    result: "",
-                    institute: "",
-                  })
-                }
-                className="btn btn-sm btn-primary"
-              >
-                + Add Education
-              </button>
             </div>
 
-            <div className="flex flex-col gap-4">
-              {educationFields.map((field, index) => (
-                <div
-                  key={field.id}
-                  className="p-4 border rounded-md bg-base-50 relative grid grid-cols-1 md:grid-cols-2 gap-4"
-                >
-                  <button
-                    type="button"
-                    onClick={() => removeEducation(index)}
-                    className="btn btn-xs btn-circle btn-error text-white absolute -top-2 -right-2"
-                  >
-                    <X />
-                  </button>
-
-                  <div>
-                    <label className="label label-text-alt">Degree/Exam</label>
-                    <input
-                      {...register(`tutorProfile.education.${index}.degree`)}
-                      placeholder="e.g. HSC"
-                      className="input input-sm input-bordered w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="label label-text-alt">Institute</label>
-                    <input
-                      {...register(`tutorProfile.education.${index}.institute`)}
-                      placeholder="Institute Name"
-                      className="input input-sm input-bordered w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="label label-text-alt">Passing Year</label>
-                    <input
-                      {...register(`tutorProfile.education.${index}.year`)}
-                      placeholder="e.g. 2020"
-                      className="input input-sm input-bordered w-full"
-                    />
-                  </div>
-                  <div>
-                    <label className="label label-text-alt">Result/GPA</label>
-                    <input
-                      {...register(`tutorProfile.education.${index}.result`)}
-                      placeholder="e.g. GPA 5.00"
-                      className="input input-sm input-bordered w-full"
-                    />
-                  </div>
-                </div>
-              ))}
-              {educationFields.length === 0 && (
-                <p className="text-sm text-gray-400 italic">
-                  No education history added yet.
-                </p>
-              )}
-            </div>
-          </div>
-
-          <button type="submit" className="btn btn-primary w-full md:w-auto">
-            Update Tutor Profile
-          </button>
-        </form>
+            <button type="submit" className="btn btn-primary w-full md:w-auto">
+              Update Tutor Profile
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+      {providerInfo.provider === "password" && (
+        <UpdatePasswordModal
+          updatePasswordModalRef={updatePasswordModalRef}
+        ></UpdatePasswordModal>
+      )}
+    </>
   );
 };
 

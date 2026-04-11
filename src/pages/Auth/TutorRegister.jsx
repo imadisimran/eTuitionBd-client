@@ -39,6 +39,7 @@ const TutorRegister = () => {
           email: result.user.email,
           institution: data?.institution,
           role: "tutor",
+          provider:"password"
         };
         const dbResult = await axiosNormal.post("/user", formData);
 

@@ -19,6 +19,7 @@ const GoogleBtn = () => {
           displayName: result.user.displayName,
           email: result.user.email,
           photoURL: result.user.photoURL,
+          provider: "google",
         };
         const { data } = await axiosNormal.post("/user", userInfo);
         if (data) {

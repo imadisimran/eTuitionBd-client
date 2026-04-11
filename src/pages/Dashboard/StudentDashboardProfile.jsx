@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useForm, useWatch } from "react-hook-form";
 import axios from "axios";
@@ -6,10 +6,15 @@ import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { confirmation, errorAlert, successAlert } from "../../utilities/alerts";
 import CircularProgress from "./CircularProgress";
+import UpdatePasswordModal from "./UpdatePasswordModal";
+import useProvider from "../../hooks/useProvider";
 
 const StudentDashboardProfile = () => {
   const { user } = useAuth();
+  const updatePasswordModalRef = useRef();
   const axiosSecure = useAxiosSecure();
+  const { providerInfo } = useProvider();
+  // console.log(providerInfo.provider)
 
   // --- 1. React Hook Form Setup ---
   const {
@@ -128,7 +133,7 @@ const StudentDashboardProfile = () => {
             console.error(error);
             errorAlert("Something went wrong");
           });
-      }
+      },
     );
   };
 
@@ -143,7 +148,7 @@ const StudentDashboardProfile = () => {
     try {
       const result = await axios.post(
         `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imageApi}`,
-        formData
+        formData,
       );
 
       if (result.data.success) {
@@ -152,7 +157,7 @@ const StudentDashboardProfile = () => {
         };
         const backendResult = await axiosSecure.patch(
           `/user?email=${user?.email}`,
-          updateData
+          updateData,
         );
 
         if (backendResult.data.modifiedCount) {
@@ -173,7 +178,7 @@ const StudentDashboardProfile = () => {
       "I want to be a tutor",
       () => {
         tutorFn();
-      }
+      },
     );
   };
 
@@ -186,196 +191,213 @@ const StudentDashboardProfile = () => {
   }
 
   return (
-    <div className="flex gap-10 flex-col md:flex-row">
-      {/* --- Left Side: Profile Image --- */}
-      <div className="flex flex-col items-center">
-        <div className="w-32 h-32 border rounded-full overflow-hidden mb-4">
-          <img
-            className="w-full h-full object-cover"
-            src={foundUser?.photoURL}
-            alt={foundUser?.displayName}
-          />
-        </div>
-
-        <form
-          onSubmit={handleUpdateProfilePicture}
-          className="flex flex-col items-center gap-2 mb-6"
-        >
-          <input
-            name="profilePic"
-            type="file"
-            className="file-input file-input-bordered file-input-xs w-full max-w-xs"
-          />
-          <button className="btn btn-secondary btn-xs">Update Picture</button>
-        </form>
-
-        <h2 className="text-2xl font-bold text-center">
-          {foundUser?.displayName}
-        </h2>
-        <div className="mt-4">
-          <CircularProgress percentage={foundUser?.profileStatus?.percent} />
-        </div>
-
-        <button
-          className="btn btn-secondary mt-10"
-          onClick={handleBecomingTutor}
-        >
-          Become a tutor
-        </button>
-      </div>
-
-      {/* --- Right Side: Main Form --- */}
-      <div className="flex-1">
-        <form
-          className="flex flex-col gap-5"
-          onSubmit={handleSubmit(updateForm)}
-        >
-          {/* Personal Info */}
-          <div className="border p-5 rounded-lg">
-            <h2 className="text-xl mb-3 font-semibold">Personal Info</h2>
-            <fieldset className="fieldset grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="label">Name</label>
-                <input
-                  {...register("name")}
-                  readOnly
-                  type="text"
-                  className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
-                />
-              </div>
-
-              <div>
-                <label className="label">Email</label>
-                <input
-                  {...register("email")}
-                  readOnly
-                  type="email"
-                  className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
-                />
-              </div>
-
-              <div>
-                <label className="label">Phone</label>
-                <input
-                  {...register("phone")}
-                  type="text"
-                  className="input input-bordered w-full"
-                  placeholder="Phone"
-                />
-              </div>
-            </fieldset>
+    <>
+      <div className="flex gap-10 flex-col md:flex-row">
+        {/* --- Left Side: Profile Image --- */}
+        <div className="flex flex-col items-center">
+          <div className="w-32 h-32 border rounded-full overflow-hidden mb-4">
+            <img
+              className="w-full h-full object-cover"
+              src={foundUser?.photoURL}
+              alt={foundUser?.displayName}
+            />
           </div>
 
-          {/* Academic & Location */}
-          <div className="border p-5 rounded-lg">
-            <h2 className="text-xl mb-3 font-semibold">Academic & Location</h2>
-            <fieldset className="fieldset grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="label">Class</label>
-                <select
-                  {...register("studentClass")}
-                  className="select select-bordered w-full"
-                >
-                  <option disabled value="">
-                    Select Class
-                  </option>
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                    <option key={num} value={`class_${num}`}>
-                      Class {num}
-                    </option>
-                  ))}
-                  <option value="hsc_1">HSC 1st Year</option>
-                  <option value="hsc_2">HSC 2nd Year</option>
-                </select>
-              </div>
+          <form
+            onSubmit={handleUpdateProfilePicture}
+            className="flex flex-col items-center gap-2 mb-6"
+          >
+            <input
+              name="profilePic"
+              type="file"
+              className="file-input file-input-bordered file-input-xs w-full max-w-xs"
+            />
+            <button className="btn btn-secondary btn-xs">Update Picture</button>
+          </form>
 
-              <div>
-                <label className="label">Division</label>
-                <select
-                  {...register("division")}
-                  onChange={handleDivisionChange} // Override RHF onChange manually
-                  className="select select-bordered w-full"
-                >
-                  <option disabled value="">
-                    Select Division
-                  </option>
-                  {divisionData.map((d, i) => (
-                    <option key={i} value={d.division}>
-                      {d.division}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="label">District</label>
-                <select
-                  {...register("district")}
-                  className="select select-bordered w-full"
-                  disabled={!selectedDivision} // Disable if no division selected
-                >
-                  <option disabled value="">
-                    {selectedDivision
-                      ? "Select District"
-                      : "Select Division First"}
-                  </option>
-                  {availableDistricts.map((d, i) => (
-                    <option key={i} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="md:col-span-3">
-                <label className="label">Full Address</label>
-                <input
-                  {...register("address")}
-                  type="text"
-                  className="input input-bordered w-full"
-                  placeholder="House No, Road No, Area, etc."
-                />
-              </div>
-            </fieldset>
+          <h2 className="text-2xl font-bold text-center">
+            {foundUser?.displayName}
+          </h2>
+          {providerInfo.provider === "password" && (
+            <button
+              className="btn btn-primary"
+              onClick={() => updatePasswordModalRef.current.showModal()}
+            >
+              Update Password
+            </button>
+          )}
+          <div className="mt-4">
+            <CircularProgress percentage={foundUser?.profileStatus?.percent} />
           </div>
 
-          {/* Guardian Info */}
-          <div className="border p-5 rounded-lg">
-            <h2 className="text-xl mb-3 font-semibold">Guardian Info</h2>
-            <fieldset className="fieldset grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="label">Relation</label>
-                <select
-                  {...register("guardianRelation")}
-                  className="select select-bordered w-full"
-                >
-                  <option disabled value="">
-                    Select Relation
-                  </option>
-                  <option value="father">Father</option>
-                  <option value="mother">Mother</option>
-                  <option value="others">Others</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="label">Guardian Phone</label>
-                <input
-                  {...register("guardianPhone")}
-                  type="text"
-                  className="input input-bordered w-full"
-                  placeholder="Guardian Phone"
-                />
-              </div>
-            </fieldset>
-          </div>
-
-          <button type="submit" className="btn btn-primary w-full md:w-auto">
-            Update Profile
+          <button
+            className="btn btn-secondary mt-10"
+            onClick={handleBecomingTutor}
+          >
+            Become a tutor
           </button>
-        </form>
+        </div>
+
+        {/* --- Right Side: Main Form --- */}
+        <div className="flex-1">
+          <form
+            className="flex flex-col gap-5"
+            onSubmit={handleSubmit(updateForm)}
+          >
+            {/* Personal Info */}
+            <div className="border p-5 rounded-lg">
+              <h2 className="text-xl mb-3 font-semibold">Personal Info</h2>
+              <fieldset className="fieldset grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Name</label>
+                  <input
+                    {...register("name")}
+                    readOnly
+                    type="text"
+                    className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="label">Email</label>
+                  <input
+                    {...register("email")}
+                    readOnly
+                    type="email"
+                    className="input input-bordered w-full bg-gray-100 cursor-not-allowed"
+                  />
+                </div>
+
+                <div>
+                  <label className="label">Phone</label>
+                  <input
+                    {...register("phone")}
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder="Phone"
+                  />
+                </div>
+              </fieldset>
+            </div>
+
+            {/* Academic & Location */}
+            <div className="border p-5 rounded-lg">
+              <h2 className="text-xl mb-3 font-semibold">
+                Academic & Location
+              </h2>
+              <fieldset className="fieldset grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <label className="label">Class</label>
+                  <select
+                    {...register("studentClass")}
+                    className="select select-bordered w-full"
+                  >
+                    <option disabled value="">
+                      Select Class
+                    </option>
+                    {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
+                      <option key={num} value={`class_${num}`}>
+                        Class {num}
+                      </option>
+                    ))}
+                    <option value="hsc_1">HSC 1st Year</option>
+                    <option value="hsc_2">HSC 2nd Year</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="label">Division</label>
+                  <select
+                    {...register("division")}
+                    onChange={handleDivisionChange} // Override RHF onChange manually
+                    className="select select-bordered w-full"
+                  >
+                    <option disabled value="">
+                      Select Division
+                    </option>
+                    {divisionData.map((d, i) => (
+                      <option key={i} value={d.division}>
+                        {d.division}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="label">District</label>
+                  <select
+                    {...register("district")}
+                    className="select select-bordered w-full"
+                    disabled={!selectedDivision} // Disable if no division selected
+                  >
+                    <option disabled value="">
+                      {selectedDivision
+                        ? "Select District"
+                        : "Select Division First"}
+                    </option>
+                    {availableDistricts.map((d, i) => (
+                      <option key={i} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="md:col-span-3">
+                  <label className="label">Full Address</label>
+                  <input
+                    {...register("address")}
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder="House No, Road No, Area, etc."
+                  />
+                </div>
+              </fieldset>
+            </div>
+
+            {/* Guardian Info */}
+            <div className="border p-5 rounded-lg">
+              <h2 className="text-xl mb-3 font-semibold">Guardian Info</h2>
+              <fieldset className="fieldset grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="label">Relation</label>
+                  <select
+                    {...register("guardianRelation")}
+                    className="select select-bordered w-full"
+                  >
+                    <option disabled value="">
+                      Select Relation
+                    </option>
+                    <option value="father">Father</option>
+                    <option value="mother">Mother</option>
+                    <option value="others">Others</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="label">Guardian Phone</label>
+                  <input
+                    {...register("guardianPhone")}
+                    type="text"
+                    className="input input-bordered w-full"
+                    placeholder="Guardian Phone"
+                  />
+                </div>
+              </fieldset>
+            </div>
+
+            <button type="submit" className="btn btn-primary w-full md:w-auto">
+              Update Profile
+            </button>
+          </form>
+        </div>
       </div>
-    </div>
+      {providerInfo.provider === "password" && (
+        <UpdatePasswordModal
+          updatePasswordModalRef={updatePasswordModalRef}
+        ></UpdatePasswordModal>
+      )}
+    </>
   );
 };
 

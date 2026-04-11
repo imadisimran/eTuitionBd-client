@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../../hooks/useAuth";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { errorAlert, successAlert } from "../../utilities/alerts";
 import SandClock from "../../components/SandClock";
+import useProvider from "../../hooks/useProvider";
+import UpdatePasswordModal from "./UpdatePasswordModal";
 
 const AdminDashboardProfile = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
+  const { providerInfo } = useProvider();
+  const updatePasswordModalRef = useRef();
 
   // 1. Fetch User Data (Read-only)
   const {
@@ -41,7 +45,7 @@ const AdminDashboardProfile = () => {
       // Upload to ImgBB
       const result = await axios.post(
         `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_imageApi}`,
-        formData
+        formData,
       );
 
       if (result.data.success) {
@@ -54,7 +58,7 @@ const AdminDashboardProfile = () => {
         // Update Backend
         const result2 = await axiosSecure.patch(
           `/user?email=${user?.email}`,
-          data
+          data,
         );
 
         if (result2.data.modifiedCount) {
@@ -78,58 +82,71 @@ const AdminDashboardProfile = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center h-full py-10">
-          <title>eTuitionBD - Profile</title>
+    <>
+      <div className="flex flex-col justify-center items-center h-full py-10">
+        <title>eTuitionBD - Profile</title>
 
-      <div className="card w-full max-w-md bg-base-100 border shadow-xl p-8 flex flex-col items-center text-center">
-        {/* Profile Image Wrapper */}
-        <div className="relative">
-          <div className="avatar">
-            <div className="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
-              <img
-                src={adminData?.photoURL}
-                alt={adminData?.displayName || "Admin"}
-                className="object-cover w-full h-full"
-              />
+        <div className="card w-full max-w-md bg-base-100 border shadow-xl p-8 flex flex-col items-center text-center">
+          {/* Profile Image Wrapper */}
+          <div className="relative">
+            <div className="avatar">
+              <div className="w-32 h-32 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2 overflow-hidden">
+                <img
+                  src={adminData?.photoURL}
+                  alt={adminData?.displayName || "Admin"}
+                  className="object-cover w-full h-full"
+                />
+              </div>
+            </div>
+            {/* Admin Badge */}
+            <div className="absolute top-0 right-0">
+              <span className="badge badge-error badge-lg font-bold text-white shadow-md">
+                ADMIN
+              </span>
             </div>
           </div>
-          {/* Admin Badge */}
-          <div className="absolute top-0 right-0">
-            <span className="badge badge-error badge-lg font-bold text-white shadow-md">
-              ADMIN
-            </span>
+
+          {/* User Details */}
+          <div className="mt-6 space-y-2">
+            <h2 className="text-3xl font-bold text-gray-800">
+              {adminData?.displayName}
+            </h2>
+            <p className="text-gray-500 font-medium bg-gray-100 px-4 py-1 rounded-full inline-block">
+              {user?.email}
+            </p>
           </div>
+
+          <div className="divider my-6">Update Photo</div>
+
+          {/* Image Upload Form */}
+          <form
+            onSubmit={handleUpdateProfilePicture}
+            className="flex flex-col items-center gap-3 w-full"
+          >
+            <input
+              name="profilePic"
+              type="file"
+              accept="image/*"
+              className="file-input file-input-bordered file-input-primary w-full max-w-xs"
+            />
+            <button type="submit" className="btn btn-primary btn-wide">
+              Upload New Picture
+            </button>
+          </form>
+          {providerInfo.provider === "password" && (
+            <button
+              className="btn btn-primary"
+              onClick={() => updatePasswordModalRef.current.showModal()}
+            >
+              Update Password
+            </button>
+          )}
         </div>
-
-        {/* User Details */}
-        <div className="mt-6 space-y-2">
-          <h2 className="text-3xl font-bold text-gray-800">
-            {adminData?.displayName}
-          </h2>
-          <p className="text-gray-500 font-medium bg-gray-100 px-4 py-1 rounded-full inline-block">
-            {user?.email}
-          </p>
-        </div>
-
-        <div className="divider my-6">Update Photo</div>
-
-        {/* Image Upload Form */}
-        <form
-          onSubmit={handleUpdateProfilePicture}
-          className="flex flex-col items-center gap-3 w-full"
-        >
-          <input
-            name="profilePic"
-            type="file"
-            accept="image/*"
-            className="file-input file-input-bordered file-input-primary w-full max-w-xs"
-          />
-          <button type="submit" className="btn btn-primary btn-wide">
-            Upload New Picture
-          </button>
-        </form>
       </div>
-    </div>
+      <UpdatePasswordModal
+        updatePasswordModalRef={updatePasswordModalRef}
+      ></UpdatePasswordModal>
+    </>
   );
 };
 
