@@ -17,7 +17,9 @@ const Navbar = () => {
       return result.data;
     },
   });
-  const links = (
+  const links = loading ? (
+    <span className="loading loading-dots loading-xl"></span>
+  ) : (
     <>
       <li>
         <NavLink to="/">Home</NavLink>
@@ -30,6 +32,14 @@ const Navbar = () => {
       </li>
       <li>
         <NavLink to="/contact">Contact</NavLink>
+      </li>
+      {user && (
+        <li>
+          <NavLink to="/dashboard">Dashboard</NavLink>
+        </li>
+      )}
+      <li>
+        <NavLink to="/about">About</NavLink>
       </li>
     </>
   );

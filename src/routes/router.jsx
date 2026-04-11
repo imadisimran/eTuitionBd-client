@@ -26,6 +26,7 @@ import NotFound from "../pages/NotFound/NotFound";
 import PaymentCancel from "../pages/Dashboard/PaymentCancel";
 import StudentRoute from "./StudentRoute";
 import Contact from "../pages/Contact/Contact";
+import AboutUs from "../pages/AboutUs/AboutUs";
 
 const router = createBrowserRouter([
   {
@@ -37,7 +38,8 @@ const router = createBrowserRouter([
       { path: "tutor/:id", element: <TutorDetails></TutorDetails> },
       { path: "all-tuitions", element: <AllTuitions></AllTuitions> },
       { path: "all-tutors", element: <AllTutors></AllTutors> },
-      {path:"contact",element:<Contact></Contact>}
+      { path: "contact", element: <Contact></Contact> },
+      { path: "about", element: <AboutUs></AboutUs> },
     ],
   },
   {
@@ -119,6 +121,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   { path: "/*", element: <NotFound></NotFound> },
 ]);
 
