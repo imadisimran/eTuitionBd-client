@@ -32,7 +32,7 @@ const Login = () => {
       });
   };
 
-  const fillWithDemo = ({email,password}) => {
+  const fillWithDemo = ({ email, password }) => {
     setValue("email", email);
     setValue("password", password);
   };
@@ -43,16 +43,48 @@ const Login = () => {
         <h3 className="text-xl font-bold text-center flex relative justify-center">
           <span>Login</span>{" "}
           <details className="dropdown absolute right-0">
-            <summary className="m-1 btn btn-secondary ">Demo Credentials</summary>
+            <summary className="m-1 btn btn-secondary ">
+              Demo Credentials
+            </summary>
             <ul className="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
               <li>
-                <button onClick={()=>fillWithDemo({email:"student1@mail.com",password:"BD loose"})} className="btn btn-ghost btn-primary">Student</button>
+                <button
+                  onClick={() =>
+                    fillWithDemo({
+                      email: "student1@mail.com",
+                      password: "BD loose2",
+                    })
+                  }
+                  className="btn btn-ghost btn-primary"
+                >
+                  Student
+                </button>
               </li>
               <li>
-                <button onClick={()=>fillWithDemo({email:"tutor1@mail.com",password:"BD loose"})} className="btn btn-ghost btn-primary">Tutor</button>
+                <button
+                  onClick={() =>
+                    fillWithDemo({
+                      email: "tutor1@mail.com",
+                      password: "BD loose",
+                    })
+                  }
+                  className="btn btn-ghost btn-primary"
+                >
+                  Tutor
+                </button>
               </li>
               <li>
-                <button onClick={()=>fillWithDemo({email:"hero@admin.com",password:"heroAdmin"})} className="btn btn-ghost btn-primary">Admin</button>
+                <button
+                  onClick={() =>
+                    fillWithDemo({
+                      email: "hero@admin.com",
+                      password: "heroAdmin",
+                    })
+                  }
+                  className="btn btn-ghost btn-primary"
+                >
+                  Admin
+                </button>
               </li>
             </ul>
           </details>
