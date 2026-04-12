@@ -4,8 +4,8 @@ import useAuth from "./useAuth";
 import { auth } from "../firebase/firebase.config";
 
 const axiosSecure = axios.create({
-  // baseURL: "https://e-tuition-bd-server-gamma.vercel.app",
-  baseURL: "http://localhost:3000",
+  baseURL: "https://e-tuition-bd-server-gamma.vercel.app",
+  // baseURL: "http://localhost:3000",
 });
 
 const useAxiosSecure = () => {
