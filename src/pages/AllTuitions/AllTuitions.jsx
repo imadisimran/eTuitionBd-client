@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef, useEffect } from "react";
 import useAxiosNormal from "../../hooks/useAxiosNormal";
 import TuitionCard from "../../components/TuitionCard";
 import { useForm, useWatch } from "react-hook-form";
@@ -25,6 +25,9 @@ const subjectOptions = [
 const AllTuitions = () => {
   const axiosNormal = useAxiosNormal();
   const [selectedPage, setSelectedPage] = useState(1);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
   const [filterParams, setFilterParams] = useState({
     sortBy: "post_date",
   });
@@ -40,7 +43,9 @@ const AllTuitions = () => {
         return result.data;
       },
     });
-  const totalPages = Math.ceil(totalTuitions / 6);
+
+  // Assuming 8 items per page for a 4-column layout looks better (2 rows)
+  const totalPages = Math.ceil(totalTuitions / 8);
   const pageNumber = [...Array(totalPages).keys()].map((num) => num + 1);
 
   // Form Setup
@@ -74,16 +79,16 @@ const AllTuitions = () => {
 
   const handleDivisionChange = (e) => {
     setValue("division", e.target.value);
-    setValue("district", "");
+    setValue("district", ""); // Reset district when division changes
   };
 
   const handleApplyFilter = (data) => {
     const cleanFilters = Object.fromEntries(
-      Object.entries(data).filter(([_, v]) => v != null && v !== "")
+      Object.entries(data).filter(([_, v]) => v != null && v !== ""),
     );
-    // console.log(cleanFilters);
     setFilterParams(cleanFilters);
     setSelectedPage(1);
+    setIsFilterOpen(false); // Close dropdown after applying advanced filters
   };
 
   const handleReset = () => {
@@ -97,7 +102,19 @@ const AllTuitions = () => {
     });
     setFilterParams({ sortBy: "post_date" });
     setSelectedPage(1);
+    setIsFilterOpen(false);
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   if (isDivisionLoading || isLoading) {
     return (
@@ -108,215 +125,224 @@ const AllTuitions = () => {
   }
 
   return (
-    <section>
+    <section className="container mx-auto px-4 py-8 max-w-7xl">
       <title>eTuitionBD - Tuitions</title>
 
-      <div className="drawer lg:drawer-open">
-        <input id="filter-drawer" type="checkbox" className="drawer-toggle" />
-
-        <div className="drawer-content flex flex-col p-4 gap-4">
-          <div className="lg:hidden">
-            <label htmlFor="filter-drawer" className="btn btn-primary w-full">
+      {/* Top Search & Filter Bar */}
+      <form onSubmit={handleSubmit(handleApplyFilter)} className="mb-8">
+        <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between w-full">
+          {/* Dedicated Functional Search Bar */}
+          <div className="flex-grow w-full md:max-w-xl">
+            <div className="relative flex items-center">
               <svg
+                className="absolute left-4 w-5 h-5 text-neutral/50"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6"
               >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"
+                  strokeWidth="2"
+                  d="M21 21l-4.35-4.35m1.85-5.15a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
               </svg>
-              Filter Tuitions
-            </label>
-          </div>
-
-          {/* Tuition Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-            {tuitions.map((tuition) => (
-              <TuitionCard key={tuition._id} tuition={tuition}></TuitionCard>
-            ))}
-          </div>
-        </div>
-
-        <div className="drawer-side z-50 top-5">
-          <label
-            htmlFor="filter-drawer"
-            aria-label="close sidebar"
-            className="drawer-overlay"
-          ></label>
-
-          {/* Sidebar Container */}
-          <div className="menu bg-base-200 text-base-content min-h-full w-80 p-4 lg:sticky lg:top-0 lg:h-screen lg:overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold">Filter Options</h2>
-              <label
-                htmlFor="filter-drawer"
-                className="btn btn-sm btn-circle btn-ghost lg:hidden"
+              <input
+                {...register("searchTxt")}
+                type="search"
+                className="input input-bordered w-full pl-12 pr-24 rounded-full bg-base-100 shadow-sm focus:outline-primary"
+                placeholder="Search tuitions by title, subject..."
+              />
+              <button
+                type="submit"
+                className="absolute right-1 btn btn-primary btn-sm rounded-full px-6"
               >
-                ✕
-              </label>
-            </div>
-
-            <form
-              onSubmit={handleSubmit(handleApplyFilter)}
-              className="space-y-4"
-            >
-              {/* Search */}
-              <div className="form-control">
-                <label className="input input-bordered flex items-center gap-2">
-                  <svg
-                    className="h-[1em] opacity-50"
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                  >
-                    <g
-                      strokeLinejoin="round"
-                      strokeLinecap="round"
-                      strokeWidth="2.5"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <circle cx="11" cy="11" r="8"></circle>
-                      <path d="m21 21-4.3-4.3"></path>
-                    </g>
-                  </svg>
-                  <input
-                    {...register("searchTxt")}
-                    type="search"
-                    className="grow"
-                    placeholder="Search"
-                  />
-                </label>
-              </div>
-
-              {/* Sort */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Sort By</span>
-                </label>
-                <select
-                  className="select select-bordered w-full"
-                  {...register("sortBy")}
-                >
-                  <option value="post_date">Post Date</option>
-                  <option value="budget">Budget</option>
-                </select>
-              </div>
-
-              {/* Class */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Class</span>
-                </label>
-                <select
-                  {...register("studentClass")}
-                  className="select select-bordered w-full"
-                >
-                  <option disabled value="">
-                    Select Class
-                  </option>
-                  {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
-                    <option key={num} value={`class_${num}`}>
-                      Class {num}
-                    </option>
-                  ))}
-                  <option value="hsc_1">HSC 1st Year</option>
-                  <option value="hsc_2">HSC 2nd Year</option>
-                </select>
-              </div>
-
-              {/* Division */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Division</span>
-                </label>
-                <select
-                  {...register("division")}
-                  onChange={handleDivisionChange}
-                  className="select select-bordered w-full"
-                >
-                  <option disabled value="">
-                    Select Division
-                  </option>
-                  {divisionData.map((d, i) => (
-                    <option key={i} value={d.division}>
-                      {d.division}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* District */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">District</span>
-                </label>
-                <select
-                  {...register("district")}
-                  className="select select-bordered w-full"
-                  disabled={!selectedDivision}
-                >
-                  <option disabled value="">
-                    {selectedDivision
-                      ? "Select District"
-                      : "Select Division First"}
-                  </option>
-                  {availableDistricts.map((d, i) => (
-                    <option key={i} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Subject */}
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Subject</span>
-                </label>
-                <select
-                  className="select select-bordered w-full"
-                  {...register("subject")}
-                >
-                  <option value="" disabled>
-                    Select Subject
-                  </option>
-                  {subjectOptions.map((sub, index) => (
-                    <option key={index} value={sub.value}>
-                      {sub.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <button type="submit" className="btn btn-primary w-full mt-4">
-                Apply Filters
+                Search
               </button>
-            </form>
-            <button onClick={handleReset} className="btn btn-secondary mt-5">
-              Clear Filters
+            </div>
+          </div>
+
+          {/* Advanced Filters Dropdown */}
+          <div className="relative w-full md:w-auto" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className="btn btn-outline w-full md:w-auto flex items-center gap-2 rounded-full px-6"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M3 3a1 1 0 011-1h12a1 1 0 011 1v3a1 1 0 01-.293.707L12 11.414V15a1 1 0 01-.293.707l-2 2A1 1 0 018 17v-5.586L3.293 6.707A1 1 0 013 6V3z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              Filters
             </button>
+
+            {/* Dropdown Menu Box */}
+            {isFilterOpen && (
+              <div className="absolute right-0 top-full mt-3 w-full sm:w-80 md:w-96 bg-base-100 shadow-2xl rounded-2xl border border-base-200 z-50 p-6 overflow-y-auto max-h-[70vh]">
+                <h3 className="font-bold text-lg mb-4 border-b pb-2">
+                  Advanced Filters
+                </h3>
+
+                <div className="space-y-4">
+                  {/* Sort */}
+                  <div className="form-control">
+                    <label className="label py-1">
+                      <span className="label-text font-medium">Sort By</span>
+                    </label>
+                    <select
+                      className="select select-bordered select-sm w-full"
+                      {...register("sortBy")}
+                    >
+                      <option value="post_date">Post Date</option>
+                      <option value="budget">Budget</option>
+                    </select>
+                  </div>
+
+                  {/* Class */}
+                  <div className="form-control">
+                    <label className="label py-1">
+                      <span className="label-text font-medium">Class</span>
+                    </label>
+                    <select
+                      {...register("studentClass")}
+                      className="select select-bordered select-sm w-full"
+                    >
+                      <option value="">Any Class</option>
+                      {Array.from({ length: 10 }, (_, i) => i + 1).map(
+                        (num) => (
+                          <option key={num} value={`class_${num}`}>
+                            Class {num}
+                          </option>
+                        ),
+                      )}
+                      <option value="hsc_1">HSC 1st Year</option>
+                      <option value="hsc_2">HSC 2nd Year</option>
+                    </select>
+                  </div>
+
+                  {/* Subject */}
+                  <div className="form-control">
+                    <label className="label py-1">
+                      <span className="label-text font-medium">Subject</span>
+                    </label>
+                    <select
+                      className="select select-bordered select-sm w-full"
+                      {...register("subject")}
+                    >
+                      <option value="">Any Subject</option>
+                      {subjectOptions.map((sub, index) => (
+                        <option key={index} value={sub.value}>
+                          {sub.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Division */}
+                  <div className="form-control">
+                    <label className="label py-1">
+                      <span className="label-text font-medium">Division</span>
+                    </label>
+                    <select
+                      {...register("division")}
+                      onChange={handleDivisionChange}
+                      className="select select-bordered select-sm w-full"
+                    >
+                      <option value="">Any Division</option>
+                      {divisionData.map((d, i) => (
+                        <option key={i} value={d.division}>
+                          {d.division}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* District */}
+                  <div className="form-control">
+                    <label className="label py-1">
+                      <span className="label-text font-medium">District</span>
+                    </label>
+                    <select
+                      {...register("district")}
+                      className="select select-bordered select-sm w-full"
+                      disabled={!selectedDivision}
+                    >
+                      <option value="">
+                        {selectedDivision
+                          ? "Any District"
+                          : "Select Division First"}
+                      </option>
+                      {availableDistricts.map((d, i) => (
+                        <option key={i} value={d}>
+                          {d}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="pt-4 flex gap-2">
+                    <button type="submit" className="btn btn-primary flex-grow">
+                      Apply Now
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleReset}
+                      className="btn btn-neutral"
+                    >
+                      Reset
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
-      </div>
-      <div className="w-fit mx-auto space-x-5">
-        {pageNumber.map((p) => (
-          <button
-            key={p}
-            onClick={() => setSelectedPage(p)}
-            className={`btn btn-sm ${
-              selectedPage === p ? "btn-accent" : "btn-neutral"
-            }`}
-          >
-            {p}
-          </button>
-        ))}
-      </div>
+      </form>
+
+      {/* Tuition Cards Grid - Now 4 columns on xl screens */}
+      {tuitions.length === 0 ? (
+        <div className="text-center py-20 bg-base-200 rounded-box border border-base-300">
+          <h2 className="text-2xl font-bold text-neutral">No Tuitions Found</h2>
+          <p className="text-neutral/70 mt-2">
+            Try adjusting your search or filters.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-10">
+          {tuitions.map((tuition) => (
+            <TuitionCard key={tuition._id} tuition={tuition} />
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {tuitions.length > 0 && (
+        <div className="flex justify-center flex-wrap gap-2 mt-8">
+          {pageNumber.map((p) => (
+            <button
+              key={p}
+              onClick={() => {
+                setSelectedPage(p);
+                window.scrollTo({ top: 0, behavior: "smooth" }); // Optional UX addition
+              }}
+              className={`btn btn-sm ${
+                selectedPage === p ? "btn-primary" : "btn-outline"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      )}
     </section>
   );
 };
